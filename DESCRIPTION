@@ -1,15 +1,24 @@
 Package: rchitex
-Title: What the Package Does (One Line, Title Case)
+Title: Creates Nicely Format Text and Latex Tables
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Ben",
+           family = "Dempe",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "dempeb18@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
-License: What license it uses
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/bdempe18/rchitex
 BugReports: https://github.com/bdempe18/rchitex/issues
+Suggests: 
+    covr,
+    testthat (>= 2.1.0),
+    spelling,
+    knitr,
+    rmarkdown
+Language: en-US
+VignetteBuilder: knitr
+RoxygenNote: 6.1.1
