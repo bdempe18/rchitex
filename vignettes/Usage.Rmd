@@ -14,6 +14,59 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(rchitex)
+```{r setup, echo = FALSE}
+suppressPackageStartupMessages(library(rchitex))
+```
+
+RCHITEX provides an extensive set of options allowing useres to generate and output nicely formatted text tables wiles simultaneously outputting the the equilvalent Latex code to a provided path. RCHITEX is intended to bridge the gap between statistical exploration in R and article writing.
+
+# Simple output
+
+RCHITEX's base functionality accepts a vector of regression models. If an output path is not provided, `build` simply outputs a formatted text summary of the models. If an output path is provided with the argument `path`, the regression output is also written to a tex file.
+
+```{r overviewEx}
+# Example data
+data('freeny')
+mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level + 
+            market.potential, data = freeny)
+mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
+           data = freeny)
+
+build(mod, mod2)
+
+# To also write latex code add
+# build(mod, mod2, path=getwd())
+```
+
+# Formatting
+## Variable
+
+Variable names can be customized by passing a list associating variable names with the desired output format. 
+
+```{r formatting, results='asis'}
+id_names <- list('price.index' = 'Price index',
+                 'income.level' = 'Income level',
+                 'market.potential' = 'Market potential',
+                 'lag.quarterly.revenue' = 'Lagged rev')
+build(mod, mod2, indep_names = id_names, md='html')
+```
+
+# Creating an appendix
+
+RCHITEX automates the process of generating lengthy appendices in LaTeX. The `append` function accepts a list of rchitex return objects and writes them in an organized tree structure. A tex file titled *appendix.tex* is written to the top of the file tree and contains a LaTeX section in which each table is printed on its own page.
+
+After building an appendix with `append`, the line `\input{appendix/appendix.tex}` will add your R tables as a LaTeX appendix.
+```{r appendix, eval=FALSE}
+tex1 <- build(mod, label='f1', silent=TRUE, landscape=T)
+tex2 <- build(mod2, label='f2', silent=TRUE)
+d <- paste(getwd(), 'rchitEx', sep='/')
+append(list(tex1, tex2), d)
+
+```
+
+# Descriptive statistics
+
+``` {r descriptive, results='asis'}
+df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
+describe(df, md='html')
 ```

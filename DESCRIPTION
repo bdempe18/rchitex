@@ -14,6 +14,8 @@ LazyData: true
 URL: https://github.com/bdempe18/rchitex
 BugReports: https://github.com/bdempe18/rchitex/issues
 Suggests: 
+    lmtest,
+    sandwich,
     covr,
     testthat (>= 2.1.0),
     spelling,
@@ -22,3 +24,6 @@ Suggests:
 Language: en-US
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+Imports: 
+    utils,
+    stats
