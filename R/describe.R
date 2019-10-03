@@ -9,6 +9,8 @@
 #' @param silent No text is outputted if true.
 #' @param path File path to write tex file.
 #' @param max_precision Maximum number of digits in each table cell.
+#' @param statistics A list of functions to be applied to each column of the data frame or tibble.
+#'   Each function must be vectorized.
 #'
 #' @examples
 #' df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
@@ -26,7 +28,8 @@ describe <- function(df, note='', silent = F, path = NA, max_precision = 6,
                                       'Mean' = mean,
                                       'St. Dev' = stats::sd,
                                       'Min' = min,
-                                      'Max' = max), md = NA) {
+                                      'Max' = max),
+                     md = NA, landscape=FALSE, label='sumStats', title="Summary statistics") {
   col_stats <- function(data, fs) {
     lapply(fs, function(f) f(data))
   }
@@ -40,14 +43,25 @@ describe <- function(df, note='', silent = F, path = NA, max_precision = 6,
   if (ncol(data) != length(names(statistics)))  stop('Descriptive functions must be vectorized')
   colnames(data) <- names(statistics)
 
+  out <- ''
   if(!silent && is.na(md)) to_text(data)
   path <- ifelse(is.na(md), path, stdout())
-  if (md == 'latex' || (is.na(md) && !is.na(path))) {
+  if ((!is.na(md) && md == 'latex') || (is.na(md) && is.na(path))) {
     out <- to_tex(data)
-  } else if (md == 'html') {
+    if (!is.na(path) && landscape) {
+      out <- gen_land_table(out, title, label)
+    } else if (!is.na(path)) {
+      out <- gen_table_header(out, title, label)
+    }
+
+  } else if (!is.na(md) && md == 'html') {
     out <- to_html(data)
   }
+
+
+
   if (!(is.na(path) && is.na(md))) writeLines(out)
 
-  invisible(out)
+
+  invisible(list(label=label, caption=title, tex=out, options=list(landscape=landscape)))
 }

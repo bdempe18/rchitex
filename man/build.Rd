@@ -8,7 +8,7 @@ build(..., dep_names = NA, indep_names = NA, note = "",
   title = "Model results", max_precision = 3, path = NA,
   rse = FALSE, silent = FALSE, landscape = FALSE, report = "p",
   stats = "oraf", pre_stats = NA, md = NA, header = TRUE,
-  label = "table")
+  label = "table", sig = NA)
 }
 \arguments{
 \item{...}{Regression models to be included in Table.  Table will display models in the same order as provided.}
@@ -49,6 +49,9 @@ The Markdown chunk must be set to \code{results = "asis"}.}
 \item{header}{Outputs RCHITEX header if true.}
 
 \item{label}{Latex label.}
+
+\item{sig}{List containing the associations between significance symbols and cut-off p values.
+List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).}
 }
 \value{
 Invisible return containing a list of model attributes.

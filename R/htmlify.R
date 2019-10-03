@@ -72,8 +72,11 @@ to_html_m <- function(reg_data, max_precision, fit_char, sig = list(), path = NA
   }))
 
   p_post <- unlist(lapply(names(sig), function(s) {
-    paste0('$^{', s, '}$p$<$', sig[[s]], ' ', collapse='')
+    paste0('<sup>',s, '>/sup><', sig[[s]], ' ', collapse='')
   }))
+  ## TODO Finish
+  p_post <- row_start(c(row_el('Note:', 'left'), row_el(p_post, 'right'))) # Maybe...? Need to check
+  #<tr><td style="text-align:left"><em>Note:</em></td><td style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
 
   post <- '</table>'
   #writeLines(c(preamble, body, hr, fit, hr, post))

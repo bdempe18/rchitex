@@ -27,6 +27,8 @@
 #'   The Markdown chunk must be set to \code{results = "asis"}.
 #' @param header Outputs RCHITEX header if true.
 #' @param label Latex label.
+#' @param sig List containing the associations between significance symbols and cut-off p values.
+#'   List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).
 #'
 #' @return Invisible return containing a list of model attributes.
 #'
@@ -46,7 +48,7 @@
 build <- function(..., dep_names = NA, indep_names = NA, note='', title = 'Model results',
                   max_precision = 3, path = NA, rse = FALSE,
                   silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
-                  md = NA, header = TRUE, label='table') {
+                  md = NA, header = TRUE, label='table', sig = NA) {
   ## checks
   if (rse && !requireNamespace("lmtest", quietly = TRUE) &&
       ! requireNamespace('sandwich', quietly = TRUE)) {
@@ -87,9 +89,12 @@ build <- function(..., dep_names = NA, indep_names = NA, note='', title = 'Model
 
   fit_char <- gen_stats(stats, mods, pre_stats)
   #print(line_data)
-  sig <- list('***' = 0.01,
-              '**'  = 0.05,
-              '*'   = 0.1)
+  if (is.na(sig)) {
+    sig <- list('***' = 0.01,
+                '**'  = 0.05,
+                '*'   = 0.1)
+  }
+
 
   # TODO change writeLines to return strings. Deal with output here
   out <- NA

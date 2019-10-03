@@ -1,7 +1,8 @@
 to_tex <- function(stats_mat, note='', col_max=7) {
   # TODO Ensure that path is a valid .tex path
-  citation <- '% Table generating using RCHITEX by Ben Dempe (2019)'
+  citation <- '% Table generating using RCHITEX by Ben Dempe (2019)\n'
   preamble <- gen_preamble('Summary Statistics', ncol(stats_mat))
+  print(preamble)
   col_names <- paste0(lapply(colnames(stats_mat),
                              function(x) paste0('\\multicolumn{1}{c}{',x,'} & ')),
                       collapse='')
@@ -15,8 +16,7 @@ to_tex <- function(stats_mat, note='', col_max=7) {
            '\\\\',collapse='')
   }))
   post <- paste0('\\hline \\\\[-1.8ex] \n \\textit{Note}', note,
-                 '\n\\end{tabular}\n\\end{table}')
-  # writeLines(c(citation, preamble, col_names, body, post), path)
+                 '\n\\end{tabular}')
   c(citation, preamble, col_names, body, post)
 }
 

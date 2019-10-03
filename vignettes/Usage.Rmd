@@ -1,5 +1,5 @@
 ---
-title: "Usage"
+title: "The master rchitext"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Usage}
@@ -32,14 +32,17 @@ mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level +
 mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
            data = freeny)
 
-build(mod, mod2)
+#build(mod, mod2)
+
+library(stargazer)
+stargazer(mod, type='html')
 
 # To also write latex code add
 # build(mod, mod2, path=getwd())
 ```
 
 # Formatting
-## Variable
+## Variable Names
 
 Variable names can be customized by passing a list associating variable names with the desired output format. 
 
@@ -49,6 +52,19 @@ id_names <- list('price.index' = 'Price index',
                  'market.potential' = 'Market potential',
                  'lag.quarterly.revenue' = 'Lagged rev')
 build(mod, mod2, indep_names = id_names, md='html')
+```
+
+# Level of significance 
+
+Both the p-value cutoffs for significance and the symbols used can be customized by passing a list of symbols and cut-offs as the `sig` argument. Each symbol must be associated
+with a valid numeric p value cutoff between 0 and 1. The list must be decreasing in significance. 
+
+``` {r sig, results='asis'}
+  sig <- list('!' = 0.03,
+              '**'  = 0.045,
+              '*'   = 0.1,
+              ':)'   = 0.5)
+build(mod, mod2, indep_names=id_names, md='html', sig=sig)
 ```
 
 # Creating an appendix
@@ -66,7 +82,20 @@ append(list(tex1, tex2), d)
 
 # Descriptive statistics
 
+To produce descriptive statistics, a data frame and a list of data-summarizing functions are passed into `describe`. The standard surface level output is a formatted text table along with the equivalent LaTeX code which is invisibly returned. If a file path is passed with the `path` argument, that LaTeX code is written to a file. Finally, the `md` argument allows for the LaTeX code to be written as standard output allowing it be be compiled along with Markdown files. The `describe` function is capable of producing both html and LaTeX output.
+
 ``` {r descriptive, results='asis'}
 df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
 describe(df, md='html')
+```
+
+## Self-defined functions
+
+By default, `describe` outputs the number of observations, mean, standard deviation, minimum, and maximum of each column. Self-defined or alternative descriptive functions can be also be applied by over-riding the default `statistics` argument. Note that each function must be able to compress a vector of numbers into a single summary statistic. Customizing the `statistics` parameter also lets the user define the name of each column as well as the order of functions.
+
+```{r descriptive_functions, results='asis'}
+funcs <- list('#' = length, 
+              foo = function(x) sum(x) / rnorm(1), 
+              answer = function(x) 42)
+describe(df, md='html', statistics = funcs)
 ```

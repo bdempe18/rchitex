@@ -6,7 +6,8 @@
 \usage{
 describe(df, note = "", silent = F, path = NA, max_precision = 6,
   statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min =
-  min, Max = max), md = NA)
+  min, Max = max), md = NA, landscape = FALSE, label = "sumStats",
+  title = "Summary statistics")
 }
 \arguments{
 \item{df}{Dataframe of variables.}
@@ -18,6 +19,9 @@ describe(df, note = "", silent = F, path = NA, max_precision = 6,
 \item{path}{File path to write tex file.}
 
 \item{max_precision}{Maximum number of digits in each table cell.}
+
+\item{statistics}{A list of functions to be applied to each column of the data frame or tibble.
+Each function must be vectorized.}
 }
 \value{
 None
