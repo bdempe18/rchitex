@@ -1,65 +1,67 @@
-to_tex <- function(stats_mat, note='', col_max=7) {
+summary2tex <- function(stats_mat, note='') {
   # TODO Ensure that path is a valid .tex path
-  citation <- '% Table generating using RCHITEX by Ben Dempe (2019)\n'
   preamble <- gen_preamble('Summary Statistics', ncol(stats_mat))
-  print(preamble)
   col_names <- paste0(lapply(colnames(stats_mat),
                              function(x) paste0('\\multicolumn{1}{c}{',x,'} & ')),
                       collapse='')
-  col_names <- paste0( 'Statistic & ', substr(col_names, 1, nchar(col_names)-3),'\\\\\n\\hline\\\\[-1.8ex]')
+  col_names <- paste0( 'Statistic & ', substr(col_names,
+                                              1, nchar(col_names)-3),
+                       '\\\\\n\\hline\\\\[-1.8ex]')
 
   col_len <- apply(stats_mat, 2, function(x) max(nchar(x)))
   body <- paste0(lapply(rownames(stats_mat), function(r) {
-    paste0(r, ' & ',
+    paste0(escaped(r), ' & ',
            paste0(Map(function(el,d)  paste0(format(el, nsmall=max(d-1,0)), collapse=''),
                       stats_mat[r,], col_len), collapse=' & '),
            '\\\\',collapse='')
   }))
   post <- paste0('\\hline \\\\[-1.8ex] \n \\textit{Note}', note,
                  '\n\\end{tabular}')
-  c(citation, preamble, col_names, body, post)
+  paste0(preamble, col_names, paste0(body, collapse=''), post, collapse='')
 }
 
-to_tex_m <- function(reg_data, max_precision, fit_char, sig = list(), path = NA, note='', title='',
-                     header = FALSE) {
-  citation <- '% Table generating using RCHITEX by Ben Dempe (2019)'
-  n_mods <- length(reg_data[[1]]$coef)
+to_tex_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
+                     path = NA, note='', title='', idn = NULL, sig_levels) {
+  n_mods <- length(reg_data[[1]])
   col_names <- paste0('(', 1:n_mods,')', sep=' & ', collapse='')
   col_names <- substr(col_names, 1, nchar(col_names) - 3)
 
   # Preamble
   preamble <- paste0(gen_preamble(title, n_mods),
-                     '& \\multicolumn{', n_mods, '}{c}{\\textit{Dependent variable:}}\\\\\n\t',
-                     '\\cline{2-', n_mods+1, '}\n\\\\[-1.8ex] & ', col_names, '\\\\',
+                     '& \\multicolumn{', n_mods,
+                     '}{c}{\\textit{Dependent variable:}}\\\\\n\t',
+                     '\\cline{2-', n_mods+1, '}\n\\\\[-1.8ex] & ',
+                     col_names, '\\\\',
                      '\\hline \\\\[-1.8ex]\n', sep='')
 
   ## Estimation
-  body <- unlist(lapply(names(reg_data), function(r) {
-    ests <- ifelse(is.na(reg_data[[r]]$coef), '', format(reg_data[[r]]$coef, nsmall=1, big.mark = ','))
-    ests <- paste0(ests, '$^{', sig_at(reg_data[[r]]$pval, sig), '}$')
-    errs <- ifelse(is.na(reg_data[[r]]$error), '',
-                   paste('(',format(round(reg_data[[r]]$error, 4),
-                                    nsmall=3, big.mark = ', ', scientific = FALSE),') ', sep=''))
-    paste(r, ' & ', paste0(ests, collapse=' & '), '\\\\\n',
+  body <- unlist(lapply(names(idn), function(r) {
+    ests <- ifelse(is.na(reg_data[[r]]), '', paste0(reg_data[[r]],
+                                                 '$^{', sig[[r]], '}$'))
+    errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
+                                                   sep=''))
+    paste(escaped(idn[[r]]), ' & ', paste0(ests, collapse=' & '), '\\\\\n',
           ' & ', paste0(errs, collapse='&'), '\\\\\n',
           strrep(' & ', n_mods), '\\\\\n')
   }))
+
+
 
   fit <- unlist(lapply(names(fit_char), function(fc) {
     paste(paste0(c(fc, fit_char[[fc]]),collapse = ' & '),'\\\\', collapse='')
   }))
 
-  p_post <- unlist(lapply(names(sig), function(s) {
-    paste0('$^{', s, '}$p$<$', sig[[s]], ' ', collapse='')
+  p_post <- unlist(lapply(names(sig_levels), function(s) {
+    paste0('$^{', s, '}$p$<$', sig_levels[[s]], ' ', collapse='')
   }))
 
   fit <- paste('\\hline \\\\[-1.8ex]\n', paste(fit, collapse=''), collapse='')
-  post <- paste0('\\hline\\hline \\\\[-1.8ex] \n \\textit{Note: } & \\multicolumn{',
-                 n_mods,'}{r}{', paste0(p_post, collapse=''), '} \\\\\n',
+  post <- paste0('\\hline\\hline \\\\[-1.8ex] \n \\textit{Note:', note,
+                 '} & \\multicolumn{', n_mods,'}{r}{',
+                 paste0(p_post, collapse=''), '} \\\\\n',
                  '\\end{tabular}', collapse='')
 
-  #writeLines(c(citation, preamble, body, fit, post), path)
-  c(citation, preamble, body, fit, post)
+  paste0(preamble, paste0(body, collapse=''), fit, post, collapse='')
 
 }
 
@@ -73,6 +75,10 @@ gen_table_header <- function(tex, cap, lbl) {
         sep = '')
 }
 
+escaped <- function(text) {
+  gsub('_', '\\\\_', text)
+}
+
 gen_land_table <- function(tex, cap, lbl) {
   c('\\begin{landscape}', gen_table_header(tex, cap=cap, lbl=lbl), '\\end{landscape}')
 }
@@ -81,4 +87,22 @@ gen_preamble <- function(title, n_cols) {
   paste0('\\begin{tabular}{@{\\extracolsep{5pt}}l ',
          strrep('c',n_cols),'}',
          '\\\\[-1.8ex]\\hline\\hline \\\\[-1.8ex]\n')
+}
+
+table_wrap <- function(tex, caption='Table', label='label') {
+  paste0('\\begin{table}[!htb]\n',
+         '\t\\centering\n',
+         '\t\\caption{', caption, '}\n',
+         '\t\\label{', label, '}\n',
+         tex,
+         '\\end{table}\n', collapse='')
+}
+
+lan_wrap <- function(tex) {
+  message('Latex table has been landscaped. `lscape` package must be sourced in Latex preamble.')
+  paste0('\\begin{landscape}\n',tex,'\\end{landscape}', collapse='')
+}
+
+header_wrap <- function(tex) {
+  paste0('% Table generated by rchitex by Ben Dempe (2019)\n', tex)
 }

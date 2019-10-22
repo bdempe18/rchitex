@@ -18,8 +18,10 @@ blank_row <- function() {
   row_start(c(row_el('', 'left'), row_el('')))
 }
 
-to_html <- function(data, title='Summary statistics') {
-  citation <- '<-- Table generating using RCHITEX by Ben Dempe (2019) -->'
+to_html <- function(data, title='Summary statistics', header=TRUE) {
+  citation <- ifelse(header,
+    '<-- Table generating using RCHITEX by Ben Dempe (2019) -->',
+    '')
   hr <- row_start(paste('<td colspan="', ncol(data) + 1,
                         '" style="border-bottom: 1px solid black"></td>', sep=''))
   preamble <- paste('<table style = "text-align: center;">',
@@ -34,12 +36,12 @@ to_html <- function(data, title='Summary statistics') {
 
 }
 
-to_html_m <- function(reg_data, max_precision, fit_char, sig = list(), path = NA, note='', title='',
-                     header = FALSE) {
+to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
+                      path = NA, note='', title='', idn = NULL, sig_levels)  {
 
   # Preamble
   citation <- '<-- Table generating using RCHITEX by Ben Dempe (2019) -->'
-  n_mods <- length(reg_data[[1]]$coef)
+  n_mods <- length(reg_data[[1]])
   col_names <- paste0('(', 1:n_mods, ')')
   col_width <- paste('<col width=175>\n', strrep('<col width=120em>\n', n_mods))
   hr <- row_start(paste('<td colspan="', n_mods + 1,
@@ -52,17 +54,18 @@ to_html_m <- function(reg_data, max_precision, fit_char, sig = list(), path = NA
   row_start(row_el(c('',col_names))), hr)
 
   # Body
-  body <- unlist(lapply(names(reg_data), function(r) {
-    ests <- ifelse(is.na(reg_data[[r]]$coef), '', format(round(
-      reg_data[[r]]$coef, max_precision), nsmall=1, big.mark = ','))
-    ests <- paste0(ests, '<sup>', sig_at(reg_data[[r]]$pval, sig), '</sup>')
-    errs <- ifelse(is.na(reg_data[[r]]$error), '',
-                   paste('(',format(round(reg_data[[r]]$error, 3),
-                                    nsmall=3, big.mark = ', ', scientific = FALSE),') ', sep=''))
-    rel_c <- row_el(c(r, ests), 'left')
+  body <- unlist(lapply(names(idn), function(r) {
+    ests <- ifelse(is.na(reg_data[[r]]), '', paste0(reg_data[[r]],
+                                                    '<sup>', sig[[r]], '</sup>'))
+    errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
+                                                   sep=''))
+    rel_c <- row_el(c(idn[[r]], ests), 'left')
     rel_e <- row_el(c(' ', errs), 'left')
     row_start(c(rel_c, rel_e, blank_row()))
   }))
+
+
+
 
   body <- paste(body, sep='')
 

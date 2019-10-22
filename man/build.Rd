@@ -30,7 +30,7 @@ build(..., dep_names = NA, indep_names = NA, note = "",
 \item{silent}{No text output if true.}
 
 \item{landscape}{Formats tex table as landscape if true. If landscape is true, make sure to add to include
-\code{\documentclass{lscape}} in your LaTeX code.}
+\code{\\documentclass{lscape}} in your LaTeX code.}
 
 \item{report}{Test statistic to be provided along with the coefficient.
 Must be either "p", "t", or "ste". Default value is "p".}
@@ -72,5 +72,4 @@ d <- list('price.index' = 'Price index', 'income.level' = 'Income level',
          'lag.quarterly.revenue' = 'Lagged rev')
 pre <- list('R. St. E' = c('True', 'True'))
 build(mod, mod2, rse = T, indep_names = d, pre_stats = pre)
-
 }

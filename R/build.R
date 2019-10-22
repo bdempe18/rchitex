@@ -16,7 +16,7 @@
 #' @param rse Transforms to robust standard errors if true. Uses HC1 like STATA.
 #' @param silent No text output if true.
 #' @param landscape Formats tex table as landscape if true. If landscape is true, make sure to add to include
-#'   \code{\documentclass{lscape}} in your LaTeX code.
+#'   \code{\\documentclass{lscape}} in your LaTeX code.
 #' @param stats Fit characteristics to be provided at bottom of table. Must be a string of reporters.
 #'   Options include "o" for number of observations, "r" for R2, "a" for adjusted R2 and "f" for f-statistic.
 #'   The inputted string determines the order of outputted reporters. Ex \code{stats='oraf'}.
@@ -43,80 +43,112 @@
 #'          'lag.quarterly.revenue' = 'Lagged rev')
 #' pre <- list('R. St. E' = c('True', 'True'))
 #' build(mod, mod2, rse = T, indep_names = d, pre_stats = pre)
-#'
 #' @export
-build <- function(..., dep_names = NA, indep_names = NA, note='', title = 'Model results',
-                  max_precision = 3, path = NA, rse = FALSE,
-                  silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
-                  md = NA, header = TRUE, label='table', sig = NA) {
-  ## checks
-  if (rse && !requireNamespace("lmtest", quietly = TRUE) &&
-      ! requireNamespace('sandwich', quietly = TRUE)) {
-    stop('Packages lmtest and sandwich are required to report robust standard errors')
-  }
+build <- function(..., dep_names = NA, indep_names = NULL, note='', title = 'Model results',
+         max_precision = 3, path = NULL, rse = FALSE,
+         silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
+         md = NA, header = TRUE, label='table', sig = NULL, as_table=FALSE) {
+  UseMethod("build")
+}
 
+#' @export
+build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
+                          max_precision = 3, path = NULL, rse = FALSE,
+                          silent = FALSE, landscape = FALSE, report = 'p', stats='all', pre_stats=NA,
+                          md = NULL, header = TRUE, label='table', sig = NULL,
+                          as_table=FALSE) {
+  ## Add validations
+  validate(md=md, max_precision=max_precision)
   mods <- list(...)
-  fit_stats <- list(ste = 2, t = 3, p = 4)
-  # assigns the independent variable in the correct order with intercept at end by default
   idn <- format_indep_names(mods, indep_names)
+  round_n <- roundr_fac(max_precision=max_precision, min_digs=1)
 
-  # Iterates over a model fit and returns the coefficients and test statistics
-  extract <- function(vn) {
-    coefs <- c()
-    errors <- c()
-    pvals <- c()
-    for (m in mods) {
-      tryCatch({
-        if(rse) {
-          m_rse <- lmtest::coeftest(m, vcov = sandwich::vcovHC(m, "HC1"))
-          coefs <- c(coefs, m_rse[vn, 1])
-          pvals <- c(pvals, m_rse[vn, 4])
-          errors <- c(errors, m_rse[vn, fit_stats[[report]]])
-        }
-        else {
-          coefs <- c(coefs, m$coefficients[[vn]])
-          errors <- c(errors, summary(m)$coefficients[vn, fit_stats[[report]]])
-          pvals <- c(pvals, summary(m)$coefficients[vn, 4])
-        }
-      }, error = function(e) NA)
-    }
-
-    list(coef = coefs, error = errors, pval = pvals)
-  }
-
-  line_data <- lapply(names(idn), extract)
-  names(line_data) <- idn
-
-  fit_char <- gen_stats(stats, mods, pre_stats)
-  #print(line_data)
-  if (is.na(sig)) {
+  # converts reporters to list indices in a lm mod summary
+  fit_stats <- list(ste = 2, t = 3, p = 4)
+  if (is.null(sig)) {
     sig <- list('***' = 0.01,
                 '**'  = 0.05,
                 '*'   = 0.1)
   }
 
-
-  # TODO change writeLines to return strings. Deal with output here
-  out <- NA
-
-  if (!is.na(md) && md == 'latex') { out <- to_tex_m(reg_data=line_data, max_precision=max_precision, fit_char=fit_char, sig=sig, path=stdout(), title=title)}
-  else if(!is.na(md) && md == 'html') { out <- to_html_m(reg_data=line_data, max_precision=max_precision, fit_char=fit_char, sig=sig, path=stdout(), title=title) }
-  else {
-    if  (!silent) to_text_m(reg_data=line_data, max_precision=max_precision, fit_char=fit_char, sig=sig, title=title)
-    out <- to_tex_m(reg_data=line_data, max_precision=max_precision, fit_char=fit_char, sig=sig, path=path, title=title)
-    if (!is.na(path) && landscape) {
-      out <- gen_land_table(out, title, label)
-    } else if (!is.na(path)) {
-      out <- gen_table_header(out, title, label)
-    }
+  # helps extract coefs
+  extract_coefs <- function(var_name) {
+    lapply(mods, function(m) {
+      tryCatch({
+        # CHECK: ROBUST STANDARD ERRORS DONT MESS WITH COEFFICIENTS....
+        round_n(m$coefficients[[var_name]])
+      }, error = function(e) NA)
+    })
   }
 
-  if (!is.na(md)) {
-    writeLines(out)
+  # violates DRY ... a bit sloppy
+  extract_reporter <- function(var_name, r) {
+    lapply(mods, function(m) {
+      tryCatch({
+        if (rse) {
+          se <- lmtest::coeftest(m, vcov = sandwich::vcovHC(m, "HC1"))
+          round_n(se[var_name, fit_stats[[r]]])
+        } else {
+          round_n(summary(m)$coefficients[var_name, fit_stats[[r]]])
+        }
+      }, error = function(e) NA)
+    })
   }
 
-  if (!is.na(path)) {
-    writeLines(out, con=path)
+  b <- structure(list(i_names  = NA,
+                      fits     = NA,
+                      coefs    = NA,
+                      reporter = NA,
+                      sig      = NA,
+                      text     = NA), class=c("rchitex", "reg"))
+
+
+  b$i_names <- idn
+  b$fits <- get_fits(mods, stats=stats, pre_stats=pre_stats, round_n)
+  b$coefs <- lapply(names(idn), function(var_name) {
+    unlist(extract_coefs(var_name))})
+  names(b$coefs) <- names(idn)
+  b$reporter <- lapply(names(idn), function(var_name)  {
+    unlist(extract_reporter(var_name, report))})
+  names(b$reporter) <- names(idn)
+  if (report == "p") pvals <- b$reporter
+  else  {
+    pvals <- lapply(names(idn), function(var_name)  {
+      unlist(extract_reporter(var_name, report))})
   }
-  invisible(list(label=label, caption=title, tex=out, options=list(landscape=landscape)))
+  b$sig <- lapply(pvals, function(p) sig_at(p, sig))
+  names(b$sig) <- names(idn)
+  x <- model2text(b$coefs, b$reporter, b$fits, b$sig, b$i_names, max_precision, note=note,
+                  title=title)
+  b$text <- x
+  if (!silent & is.null(md)) writeLines(x, con=stdout())
+  if (is.null(md) || (!is.null(md) && md == 'latex')) {
+    b$code <- to_tex_m(reg_data = b$coefs, max_precision = max_precision,
+                       fit_char = b$fits, reporter=b$reporter,
+                       sig = b$sig, note = note,
+                       title = title, idn=b$i_names, sig_levels = sig)
+    if (landscape) b$code <- lan_wrap(table_wrap(b$code))
+    else if (as_table) b$code <- table_wrap(b$code)
+    if (header) b$code <- header_wrap(b$code)
+  } else if (!is.null(md) && md == 'html') {
+    b$code <- to_html_m(reg_data = b$coefs, max_precision = max_precision,
+                        fit_char = b$fits, reporter=b$reporter,
+                        sig = b$sig, note = note,
+                        title = title, idn=b$i_names, sig_levels = sig)
+  }
+
+  if (!is.null(md)) writeLines(b$code, con=stdout())
+  if (!is.null(path)) writeLines(b$code, con=path)
+  invisible(b)
 }
+
+#' builder function
+build.function <- function(..., dep_names = NA, indep_names = NA, note='', title = 'Model results',
+                           max_precision = 3, path = NA, rse = FALSE,
+                           silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
+                           md = NA, header = TRUE, label='table', sig = NA) {
+  stop('How did we get here?!')
+}
+
+
+

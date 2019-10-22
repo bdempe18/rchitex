@@ -24,7 +24,7 @@ RCHITEX provides an extensive set of options allowing useres to generate and out
 
 RCHITEX's base functionality accepts a vector of regression models. If an output path is not provided, `build` simply outputs a formatted text summary of the models. If an output path is provided with the argument `path`, the regression output is also written to a tex file.
 
-```{r overviewEx}
+```{r overviewEx, results='asis'}
 # Example data
 data('freeny')
 mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level + 
@@ -32,13 +32,8 @@ mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level +
 mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
            data = freeny)
 
-#build(mod, mod2)
+build(mod, mod2, md='html')
 
-library(stargazer)
-stargazer(mod, type='html')
-
-# To also write latex code add
-# build(mod, mod2, path=getwd())
 ```
 
 # Formatting
@@ -76,7 +71,7 @@ After building an appendix with `append`, the line `\input{appendix/appendix.tex
 tex1 <- build(mod, label='f1', silent=TRUE, landscape=T)
 tex2 <- build(mod2, label='f2', silent=TRUE)
 d <- paste(getwd(), 'rchitEx', sep='/')
-append(list(tex1, tex2), d)
+#append(list(tex1, tex2), d)
 
 ```
 

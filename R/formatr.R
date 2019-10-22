@@ -8,16 +8,16 @@ sig_at <- function(v, sigs) {
   sa
 }
 
-gen_stats <- function(stats='oraf', mods, pre_stats=NA) {
+gen_stats <- function(stats='oraf', mods, pre_stats=NA, roundr) {
   s <- unlist(strsplit(tolower(stats), ''))
   generate <- list('o' = 'Observations',
                    'r' = 'R2',
                    'a' = 'Adjusted R2',
                    'f' = 'F Statistic')
 
-  fit_char <- list('Observations' = unlist(lapply(mods, stats::nobs)),
-                   'R2'           = unlist(lapply(mods, function(m) round(summary(m)$r.squared, 4))),
-                   'Adjusted R2'  = unlist(lapply(mods, function(m) round(summary(m)$adj.r.squared,4))),
+  fit_char <- list('Observations' = unlist(lapply(mods, function(m) format(stats::nobs(m), big.mark = ','))),
+                   'R2'           = unlist(lapply(mods, function(m) round(summary(m)$r.squared, roundr))),
+                   'Adjusted R2'  = unlist(lapply(mods, function(m) round(summary(m)$adj.r.squared,roundr))),
                    'F Statistic'  = unlist(lapply(mods, function(m) f_to_string(summary(m)$fstatistic)))
   )
 
@@ -30,14 +30,11 @@ gen_stats <- function(stats='oraf', mods, pre_stats=NA) {
 }
 
 format_indep_names <- function(mods, indep_names=NA) {
-  stopifnot(class(indep_names) == 'list' || is.na(indep_names))
-
-  if (class(indep_names) == "list") {
-    stopifnot(length(mods) <= length(indep_names))
-    return(indep_names)
-  }
   idn <- unique(unlist(lapply(mods, function(m) names(stats::coef(m)))))
   idn <- c(setdiff(idn, '(Intercept)'), '(Intercept)')
+
+  if (class(indep_names) == 'list')  return (indep_names)
+
   idn <- as.list(idn)
   names(idn) <- idn
   idn
@@ -50,4 +47,18 @@ f_to_string <- function(f_stat) {
 center_text <- function(text, width) {
   n_blank <- (width - nchar(text))%/%2
   paste0(strrep(' ', n_blank), text, strrep(' ', width-n_blank-nchar(text)))
+}
+
+print_conditional <- function(rtx, path=NA, md=NA) {
+  if (is.na(path)) path <- stdout()
+  if (is.na(md)) writeLines(text=rtx$text, con=path)
+}
+
+roundr_fac <- function(max_precision, min_digs=0) {
+  roundr <- function(num, nsmall=min_digs) {
+    if (!is.numeric(num)) return(num)
+    format(round(as.numeric(unlist(num), use.names=F),
+                 max_precision), big.mark=',', nsmall=nsmall)
+  }
+  roundr
 }

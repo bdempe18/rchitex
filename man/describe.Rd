@@ -7,7 +7,7 @@
 describe(df, note = "", silent = F, path = NA, max_precision = 6,
   statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min =
   min, Max = max), md = NA, landscape = FALSE, label = "sumStats",
-  title = "Summary statistics")
+  title = "Summary statistics", header = TRUE)
 }
 \arguments{
 \item{df}{Dataframe of variables.}
