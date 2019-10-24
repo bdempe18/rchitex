@@ -36,3 +36,65 @@ roundr_fac <- function(max_precision, min_digs=0) {
   }
   roundr
 }
+
+get_fits <- function(mods, stats='all', roundr, pre_stats=NA) {
+  # <-- function returns a list of fit values
+  # in the form of a list -->
+
+  fit_lst <- list('lm'  = 'oraf',
+                  'glm' = 'olc')
+
+  # mods may need to be coerced to list
+  # TODO: DEAL WITH ROBUST STANDARD ERRORS
+  if (class(mods) != "list") mods <- list(mods)
+
+
+  possibles <- c("Observations" = function(m) roundr(stats::nobs(m), 0),
+                 "R2" = function(m) summary(m)$r.squared,
+                 "Adjusted R2"  = function(m) summary(m)$adj.r.squared,
+                 "F Statistic"  = function(m)  {
+                   f_to_string(roundr(summary(m)['fstatistic']))[1] },
+                 "AIC"          = function(m) summary(m)$aic,
+                 "Log Likelihood" = function(m) stats::logLik(m)[1])
+  # if stats are specificed, just spc vals are searched
+  if (stats == 'all') {
+    stats <- lapply(mods, class)
+    stats <- unlist(lapply(stats, function(s) s[1]))
+    stats <- paste0(fit_lst[stats], collapse='')
+  }
+
+  aliases <- list('c' = 'AIC',
+                  'f' = 'F Statistic',
+                  'a' = 'Adjusted R2',
+                  'r' = 'R2',
+                  'o' = 'Observations',
+                  'l' = 'Log Likelihood')
+  includes <- unique(unlist(strsplit(tolower(stats), '')))
+  includes <- aliases[unlist(includes)]
+  fit_char <- lapply(names(includes), function(p) {
+    unlist(lapply(mods, function(m) {
+      tryCatch({
+        if  (grepl(p, fit_lst[class(m)[1]])) {
+          roundr(possibles[[includes[[p]]]](m))
+        } else ''
+      }, error = function(e) NA)
+    }), use.names=FALSE)
+  })
+
+  names(fit_char) <- names(possibles[unlist(includes)])
+
+  if (!is.na(pre_stats))
+    fit_char <- c(pre_stats, fit_char)
+
+  fit_char <- lapply(fit_char, function(fc) {
+    if (all(is.na(fc))) NULL
+    else fc
+  })
+
+  Filter(Negate(is.null), fit_char)
+}
+
+
+
+
+

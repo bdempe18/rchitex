@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(rchitex))
 ```
 
-RCHITEX provides an extensive set of options allowing useres to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent Latex code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
+RCHITEX provides an extensive set of options allowing users to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent Latex code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
 
 ## Regression output
 
@@ -39,7 +39,7 @@ build(mod, mod2)
 
 ### Saving Latex files
 
-Providing a filepath to the path parameter will simultaneously save a Latex representation of the regression table to the provided filepath. By default, rchitex will still output a text representation of the table. This can be supressed by setting `silent` to TRUE
+Providing a filepath to the path parameter will simultaneously save a Latex representation of the regression table to the provided filepath. By default, rchitex will still output a text representation of the table. This can be suppressed by setting `silent` to TRUE
 
 By default, rchitex saves the latex table as a tabular object. Setting the `as_table` parameter to TRUE wraps the tabular object in a table. To produce a landscaped table, set the `landscape` parameter to TRUE. Note that if a table is landscaped, you must add the line "usepackage{lscape}" to your Latex preamble.  
 
@@ -51,7 +51,7 @@ label='fig:reg'
 build(mod, mod2, path=fp, sep='/'),
       silent=TRUE, as_table=TRUE, label=label)
 ```
-### Markdown ouput
+### Markdown output
 
 The text output can be replaced with either latex or html output. This allows knitr to directly format the table when used in conjunction with RMarkdown. Note that in this case, the results argument in the markdown chunk needs to be set to 'asis'. 
 
@@ -84,7 +84,7 @@ with a valid numeric p value cutoff between 0 and 1. The list must be decreasing
 
 ### Titles and notes
 
-Default taable names can be overwritten by provining a `title` parameter. Likewise, short notes can be displayed at the bottom of the table by passing a string to the `note` parameter.
+Default table names can be overwritten by providing a `title` parameter. Likewise, short notes can be displayed at the bottom of the table by passing a string to the `note` parameter.
 
 ``` {r titleNotes, results='asis'}
   title <-'Goofy table'
@@ -139,9 +139,9 @@ describe(df, md='html', statistics = funcs)
 
 ## Creating an appendix
 
-rchitex automates the process of generating lengthy appendices in LaTeX. The `appendize` function accepts a number of rchitex or ggplot objets, saves the tables and plots to a local drive, and produces an *appendix.tex* file at the top of the file tree. The resulting Latex appendix is a section in which each table or plot is printed on its own page.
+rchitex automates the process of generating lengthy appendices in LaTeX. The `appendize` function accepts a number of rchitex or ggplot objects, saves the tables and plots to a local drive, and produces an *appendix.tex* file at the top of the file tree. The resulting Latex appendix is a section in which each table or plot is printed on its own page.
 
-Along with rchitex objects, `appendize` can handle ggplots. If a raw ggplot object is passed in, a random file name and Latex label is created. To customize the Latex figure from rchitex, the ggplot object needs to be wraped in `gg_tex`. The `gg_tex` wrapper allows you to specify a Latex caption and label.
+Along with rchitex objects, `appendize` can handle ggplots. If a raw ggplot object is passed in, a random file name and Latex label is created. To customize the Latex figure from rchitex, the ggplot object needs to be wrapped in `gg_tex`. The `gg_tex` wrapper allows you to specify a Latex caption and label.
 
 ```{r appendix, eval=FALSE}
 tex1 <- build(mod, label='f1', silent=TRUE, landscape=T)

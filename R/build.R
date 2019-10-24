@@ -6,7 +6,7 @@
 #'
 #' @param ... Regression models to be included in Table.  Table will display models in the same order as provided.
 #' @param dep_names List associating dependant variable names with desired names in table.
-#' @param indep_names List of names associating independant variable names with desired names in table.
+#' @param indep_names List of names associating independent variable names with desired names in table.
 #' @param note Optional note displayed in bottom row of the table.
 #' @param title Title of the table.
 #' @param max_precision Maximum number of digits in a table cell.
@@ -142,8 +142,8 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   #TODO add header
   # dealing with landscaping and tables
   code <- b$code
-  if ((is.null(md) || md=='latex' || mod == 'tex') &&  landscape) code <- lan_wrap(table_wrap(code))
-  else if ((is.null(md) || md=='latex' || mod == 'tex') && as_table) code <- table_wrap(code)
+  if ((is.null(md) || md=='latex' || md == 'tex') &&  landscape) code <- lan_wrap(table_wrap(code))
+  else if ((is.null(md) || md=='latex' || md == 'tex') && as_table) code <- table_wrap(code)
 
   if (!is.null(md)) writeLines(code, con=stdout())
   if (!is.null(path)) writeLines(code, con=path)
@@ -151,10 +151,8 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
 }
 
 #' builder function
-build.function <- function(..., dep_names = NA, indep_names = NA, note='', title = 'Model results',
-                           max_precision = 3, path = NA, rse = FALSE,
-                           silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
-                           md = NA, header = TRUE, label='table', sig = NA) {
+#' @param ... Shouldn't be used so arguments not specified
+build.function <- function(...) {
   stop('How did we get here?!')
 }
 

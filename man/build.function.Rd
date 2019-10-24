@@ -4,11 +4,10 @@
 \alias{build.function}
 \title{builder function}
 \usage{
-\method{build}{function}(..., dep_names = NA, indep_names = NA,
-  note = "", title = "Model results", max_precision = 3, path = NA,
-  rse = FALSE, silent = FALSE, landscape = FALSE, report = "p",
-  stats = "oraf", pre_stats = NA, md = NA, header = TRUE,
-  label = "table", sig = NA)
+\method{build}{function}(...)
+}
+\arguments{
+\item{...}{Shouldn't be used so arguments not specified}
 }
 \description{
 builder function

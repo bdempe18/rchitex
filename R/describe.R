@@ -1,6 +1,6 @@
 #' Formats Summary Tables to Text, LaTeX, and HTML
 #'
-#' Given a dataframe and a list of sumamry statistics, \code{describe} outputs
+#' Given a dataframe and a list of summary statistics, \code{describe} outputs
 #' a text table summarizing the data while simultaneously outputting the
 #' equivalent LateX code.
 #'
@@ -23,8 +23,7 @@
 #' df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
 #' describe(df)
 #'
-#' statistics <- list(N=length, Average = mean,
-#' foo = function(x) x+2)
+#' stats <- list(N=length, Average = mean, foo = function(x) x[1]+2)
 #' describe(df, statistics=stats)
 #'
 #' @return None

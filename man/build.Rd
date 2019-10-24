@@ -15,7 +15,7 @@ build(..., dep_names = NA, indep_names = NULL, note = "",
 
 \item{dep_names}{List associating dependant variable names with desired names in table.}
 
-\item{indep_names}{List of names associating independant variable names with desired names in table.}
+\item{indep_names}{List of names associating independent variable names with desired names in table.}
 
 \item{note}{Optional note displayed in bottom row of the table.}
 

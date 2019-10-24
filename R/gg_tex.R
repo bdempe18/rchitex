@@ -7,9 +7,11 @@
 #' @param caption Intended Latex title for plot figure.
 #'
 #' @examples
+#' library(ggplot2)
 #' df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
 #' g <- ggplot(data=df) + geom_point(aes(x=first, y=second))
-#' rchitex::appendize(gg_tex(g, label='ggFig', caption='My ggplot'), path=getwd())
+#' # function commented to suppressing saving to local drive
+#' # rchitex::appendize(gg_tex(g, label='ggFig', caption='My ggplot'), dir=getwd())
 #'
 #' @export
 gg_tex <- function(ggOb, label, caption = 'Figure') {
