@@ -4,13 +4,20 @@
 #' a text table summarizing the data while simultaneously outputting the
 #' equivalent LateX code.
 #'
-#' @param df Dataframe of variables.
+#' @param data Dataframe of variables.
 #' @param note Optional note displayed at bottom of table.
 #' @param silent No text is outputted if true.
 #' @param path File path to write tex file.
 #' @param max_precision Maximum number of digits in each table cell.
 #' @param statistics A list of functions to be applied to each column of the data frame or tibble.
 #'   Each function must be vectorized.
+#' @param md Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
+#'   The Markdown chunk must be set to \code{results = "asis"}.
+#' @param landscape If true, the Latex table will be landscaped.
+#' @param label Latex label.
+#' @param title Table title.
+#' @param header Includes RCHITEX header as a Latex comment if true.
+#' @param as_table True values wrap the underlying Latex Tabular object in a table.
 #'
 #' @examples
 #' df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
@@ -22,7 +29,7 @@
 #'
 #' @return None
 #' @export
-describe <- function(df, note='', silent = F, path = NA, max_precision = 6,
+describe <- function(data, note='', silent = F, path = NA, max_precision = 6,
                      statistics = list('N' = length,
                                       'Mean' = mean,
                                       'St. Dev' = stats::sd,
@@ -34,7 +41,7 @@ describe <- function(df, note='', silent = F, path = NA, max_precision = 6,
 }
 
 #' @export
-describe.default <- function(df, note='', silent = F, path = NULL, max_precision = 3,
+describe.default <- function(data, note='', silent = F, path = NULL, max_precision = 3,
                      statistics = list('N' = length,
                                        'Mean' = mean,
                                        'St. Dev' = stats::sd,
@@ -47,7 +54,9 @@ describe.default <- function(df, note='', silent = F, path = NULL, max_precision
 
   d <- structure(list(data    = NA,
                       text    = NA,
-                      options = NA), class=c("rchitex", "ss"))
+                      options = list(caption=title, label=label,
+                                     table = as_table, landscape=landscape)),
+                 class=c("rchitex", "rtsummary"))
   round_n <- roundr_fac(max_precision=max_precision, min_digs=0)
 
   # handles statistics as a vector
@@ -59,15 +68,18 @@ describe.default <- function(df, note='', silent = F, path = NULL, max_precision
     lapply(fs, function(f) round_n(f(data)))
   }
 
-  d$data <- lapply(colnames(df), function(column) {
-    col_stats(df[[column]], statistics)
+  d$data <- lapply(colnames(data), function(column) {
+    col_stats(data[[column]], statistics)
   })
 
-  d$data <- t(matrix(unlist(d$data), ncol=length(df)))
-  rownames(d$data) <- colnames(df)
+  d$data <- t(matrix(unlist(d$data), ncol=length(data)))
+  rownames(d$data) <- colnames(data)
   #if (ncol(d$data) != length(names(statistics)))  stop('Descriptive functions must be vectorized')
   colnames(d$data) <- names(statistics)
 
+  d$options$table <- as_table
+  d$options$landscape <- landscape
+  d$options$type <- ifelse(is.null(md), "latex", md)
   d$text <- data2text(d$data, title=title)
   if (is.null(md) || tolower(md) == 'latex' || tolower(md) == 'tex') {
     d$code <- summary2tex(stats_mat = d$data, note=note)
@@ -78,17 +90,21 @@ describe.default <- function(df, note='', silent = F, path = NULL, max_precision
     d$code <- to_html(d$data, title=title, header=header)
   }
 
+  # dealing with landscaping and tables
+  code <- d$code
+  if (landscape) code <- lan_wrap(table_wrap(d$code))
+  else if (as_table) code <- table_wrap(d$code)
 
   if (!silent) {
     if (is.null(md)) writeLines(d$text, con=stdout())
-    if (!is.null(path)) writeLines(d$code, con=path)
-    if (!is.null(md)) writeLines(d$code, con=stdout())
+    if (!is.null(path)) writeLines(code, con=path)
+    if (!is.null(md)) writeLines(code, con=stdout())
   }
 
   invisible(d)
 }
 
-describer.function <- function(df, note='', silent = F, path = NA, max_precision = 6,
+describer.function <- function(data, note='', silent = F, path = NA, max_precision = 6,
                               statistics = list('N' = length,
                                                 'Mean' = mean,
                                                 'St. Dev' = stats::sd,

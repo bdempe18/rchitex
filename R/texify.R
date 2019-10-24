@@ -15,7 +15,7 @@ summary2tex <- function(stats_mat, note='') {
                       stats_mat[r,], col_len), collapse=' & '),
            '\\\\',collapse='')
   }))
-  post <- paste0('\\hline \\\\[-1.8ex] \n \\textit{Note}', note,
+  post <- paste0('\\hline \\\\[-1.8ex] \n \\textit{Note:}', note,
                  '\n\\end{tabular}')
   paste0(preamble, col_names, paste0(body, collapse=''), post, collapse='')
 }

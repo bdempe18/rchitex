@@ -1,4 +1,5 @@
 model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
+                       sig_levels,
                        title = 'Regression Results',
                        note = '') {
   n_mods <- length(coefs[[1]])
@@ -54,7 +55,13 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   })
   tbl <- paste0(tbl, paste0(fit_txt, collapse=''), collapse='')
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
-  tbl <- paste0(tbl, 'Note: ', note, collapse='')
+  tbl <- paste0(tbl, 'Sig: ', collapse='')
+
+  # row of p-val cut offs at
+  txt <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')
+  txt <- paste0(strrep(' ', line_width-nchar(txt) - nchar('Sig:')),
+                txt, collapse='')
+  tbl <- paste0(tbl, txt, sep='\n', collapse='')
 
   tbl
 }
@@ -99,52 +106,4 @@ data2text <- function(stat_mat, title='Summary Statistics') {
 
   tbl <- paste0(tbl, paste0(body, collapse='', sep='\n'), collapse='')
   tbl
-}
-
-d2t <- function(stat_mat) {
-  # creates vector of max length of data over all the columns
-
-  # total table length is sum of row names max and prev. col lgths
-  tbl_len <- c(max(nchar(c('Statistic', rownames(stat_mat)))), tbl_len)
-
-  line_width <- sum(tbl_len) + 2 * length(lbls) - 1
-  tbl <- strrep('=', line_width)
-
-  fix_width <- function(text, max_width) {
-    paste(strrep('~', max_width - nchar(text)), text, '~', sep='')
-  }
-
-  fix <- function(text, max_width) {
-    paste(text, strrep('~', max(max_width - nchar(text), 0)), sep='')
-  }
-
-  # what the fuck is this
-  center_align <- function(text, max_width, digits) {
-    out <- Map(function(s, w, d) {
-      n <- s
-      paste(strrep('-', max((w-nchar(n))%/%2,0)),n,
-            strrep('!', max((w-nchar(n))%/%2,0)), sep='')
-    }, text[2:length(text)], max_width[2:length(max_width)], digits)
-    c(paste(text[1], strrep(' ', max_width[1] - nchar(text[1]))),out, sep='')
-  }
-
-  digits <- apply(stat_mat, 2, function(x) max(nchar(x)))
-
-  first_row <- paste0(Map(fix_width, lbls, tbl_len), collapse=' ')
-  tbl <- paste0(tbl, first_row, collapse='')
-  tbl <- paste0(tbl, '\n', collapse='')
-  tbl <- paste0(tbl, strrep('-', line_width), collapse='')
-  centered <- paste0(lapply(rownames(stat_mat), function(r) {
-    paste0(center_align(c(r, stat_mat[r,]), tbl_len, digits), collapse='')
-  }), collapse='\n')
-  tbl <- paste0(tbl, centered, collapse='')
-  tbl <- paste0(tbl, strrep('-', line_width), collapse='')
-
-
-  centered <- paste0(lapply(rownames(stat_mat), function(r) {
-    paste(fix(c(r, stat_mat[r,]), tbl_len), sep='', collapse='')
-  }), collapse='\n')
-
-  tbl <- paste0(tbl, centered, collapse='')
-
 }

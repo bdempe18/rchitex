@@ -1,5 +1,5 @@
 ---
-title: "The master rchitext"
+title: "The Master Rchitext"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Usage}
@@ -18,13 +18,14 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(rchitex))
 ```
 
-RCHITEX provides an extensive set of options allowing useres to generate and output nicely formatted text tables wiles simultaneously outputting the the equilvalent Latex code to a provided path. RCHITEX is intended to bridge the gap between statistical exploration in R and article writing.
+RCHITEX provides an extensive set of options allowing useres to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent Latex code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
 
-# Simple output
+## Regression output
 
-RCHITEX's base functionality accepts a vector of regression models. If an output path is not provided, `build` simply outputs a formatted text summary of the models. If an output path is provided with the argument `path`, the regression output is also written to a tex file.
+At its most core functionality, `build` converts a list of regression models to elegantly formatted text output. If an output path is not provided and md (standing for markdown) is set to its default value of null, a simple text representation of the data is printed to the console. 
 
-```{r overviewEx, results='asis'}
+
+```{r overviewEx}
 # Example data
 data('freeny')
 mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level + 
@@ -32,12 +33,33 @@ mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level +
 mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
            data = freeny)
 
-build(mod, mod2, md='html')
+build(mod, mod2)
 
 ```
 
-# Formatting
-## Variable Names
+### Saving Latex files
+
+Providing a filepath to the path parameter will simultaneously save a Latex representation of the regression table to the provided filepath. By default, rchitex will still output a text representation of the table. This can be supressed by setting `silent` to TRUE
+
+By default, rchitex saves the latex table as a tabular object. Setting the `as_table` parameter to TRUE wraps the tabular object in a table. To produce a landscaped table, set the `landscape` parameter to TRUE. Note that if a table is landscaped, you must add the line "usepackage{lscape}" to your Latex preamble.  
+
+A Latex label can be added by specifying a `label` parameter.
+
+``` {r texSav, eval=FALSE} 
+fp <- paste(getwd(),'myTable.tex')
+label='fig:reg'
+build(mod, mod2, path=fp, sep='/'),
+      silent=TRUE, as_table=TRUE, label=label)
+```
+### Markdown ouput
+
+The text output can be replaced with either latex or html output. This allows knitr to directly format the table when used in conjunction with RMarkdown. Note that in this case, the results argument in the markdown chunk needs to be set to 'asis'. 
+
+```{r htmlOverview, results='asis'}
+build(mod, mod2, md = 'html')
+```
+
+### Variable Names
 
 Variable names can be customized by passing a list associating variable names with the desired output format. 
 
@@ -46,10 +68,9 @@ id_names <- list('price.index' = 'Price index',
                  'income.level' = 'Income level',
                  'market.potential' = 'Market potential',
                  'lag.quarterly.revenue' = 'Lagged rev')
-build(mod, mod2, indep_names = id_names, md='html')
 ```
 
-# Level of significance 
+### Level of significance 
 
 Both the p-value cutoffs for significance and the symbols used can be customized by passing a list of symbols and cut-offs as the `sig` argument. Each symbol must be associated
 with a valid numeric p value cutoff between 0 and 1. The list must be decreasing in significance. 
@@ -59,38 +80,75 @@ with a valid numeric p value cutoff between 0 and 1. The list must be decreasing
               '**'  = 0.045,
               '*'   = 0.1,
               ':)'   = 0.5)
-build(mod, mod2, indep_names=id_names, md='html', sig=sig)
 ```
 
-# Creating an appendix
+### Titles and notes
 
-RCHITEX automates the process of generating lengthy appendices in LaTeX. The `append` function accepts a list of rchitex return objects and writes them in an organized tree structure. A tex file titled *appendix.tex* is written to the top of the file tree and contains a LaTeX section in which each table is printed on its own page.
+Default taable names can be overwritten by provining a `title` parameter. Likewise, short notes can be displayed at the bottom of the table by passing a string to the `note` parameter.
 
-After building an appendix with `append`, the line `\input{appendix/appendix.tex}` will add your R tables as a LaTeX appendix.
-```{r appendix, eval=FALSE}
-tex1 <- build(mod, label='f1', silent=TRUE, landscape=T)
-tex2 <- build(mod2, label='f2', silent=TRUE)
-d <- paste(getwd(), 'rchitEx', sep='/')
-#append(list(tex1, tex2), d)
+``` {r titleNotes, results='asis'}
+  title <-'Goofy table'
+  note <-  'My note'
+  build(mod, mod2, indep_names=id_names, md='html', sig=sig,
+      title=title, note=note)
+```  
 
+### Addition fit characteristics
+
+Rchitex allows for simple customization of the fit characteristics at the bottom of the regression table. For example, a linear model will list of the number of observations, R2, adjusted R2, and F statistic by default. Fit characteristics can be reordered and excluded through the `stats` parameter. Each fit characteristic has a letter designation. 
+
+* c = Akaike Information Criterion
+* f = F statistic
+* a = Adjusted R2
+* r = R2
+* o = Number of observations
+* l = Log likelihood
+
+To customize the fit listing, a single string of characters needs to be passed to the `stats` parameter. For example, if you want just want to list the R2 and number of observations in that order, set `stats = "ro"`.
+
+You may also provide your own lists to be included in the fit characterization section. A list must be passed to the `pre_stats` parameter where the name of each list element is the intended label and the value is a vector of values to be outputted. The size of the vector should be the number of models in the table.
+
+```{r pre_stats, results='asis'}
+stats = 'ro'
+pre_stats <- list("Full sample" = c("Yes", "No"))
+
+  build(mod, mod2, indep_names=id_names, md='html', sig=sig,
+      title=title, note=note, stats=stats, pre_stats=pre_stats)
 ```
 
-# Descriptive statistics
+## Descriptive statistics
 
-To produce descriptive statistics, a data frame and a list of data-summarizing functions are passed into `describe`. The standard surface level output is a formatted text table along with the equivalent LaTeX code which is invisibly returned. If a file path is passed with the `path` argument, that LaTeX code is written to a file. Finally, the `md` argument allows for the LaTeX code to be written as standard output allowing it be be compiled along with Markdown files. The `describe` function is capable of producing both html and LaTeX output.
+Tables of descriptive statistics are produced with the `describe` method. A single data frame or tibble needs to be passed as the `data` parameter. Generally all features available to `build` as also available to `describe`. Either a text, html, or latex table will be outputted to the console while a latex file is written to a specified file. 
 
 ``` {r descriptive, results='asis'}
 df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
 describe(df, md='html')
 ```
 
-## Self-defined functions
+### Self-defined functions
 
-By default, `describe` outputs the number of observations, mean, standard deviation, minimum, and maximum of each column. Self-defined or alternative descriptive functions can be also be applied by over-riding the default `statistics` argument. Note that each function must be able to compress a vector of numbers into a single summary statistic. Customizing the `statistics` parameter also lets the user define the name of each column as well as the order of functions.
+`describe` has the additional ability to summarize tables with self-defined functions. By default, `describe` outputs the number of observations, mean, standard deviation, minimum, and maximum of each column. Self-defined or alternative descriptive functions can be also be applied by over-riding the default `statistics` argument. Note that each function must be able to compress a vector of numbers into a single summary statistic. Customizing the `statistics` parameter also lets the user define the name of each column as well as the order of functions.
 
 ```{r descriptive_functions, results='asis'}
 funcs <- list('#' = length, 
               foo = function(x) sum(x) / rnorm(1), 
               answer = function(x) 42)
 describe(df, md='html', statistics = funcs)
+```
+
+
+## Creating an appendix
+
+rchitex automates the process of generating lengthy appendices in LaTeX. The `appendize` function accepts a number of rchitex or ggplot objets, saves the tables and plots to a local drive, and produces an *appendix.tex* file at the top of the file tree. The resulting Latex appendix is a section in which each table or plot is printed on its own page.
+
+Along with rchitex objects, `appendize` can handle ggplots. If a raw ggplot object is passed in, a random file name and Latex label is created. To customize the Latex figure from rchitex, the ggplot object needs to be wraped in `gg_tex`. The `gg_tex` wrapper allows you to specify a Latex caption and label.
+
+```{r appendix, eval=FALSE}
+tex1 <- build(mod, label='f1', silent=TRUE, landscape=T)
+tex2 <- build(mod2, label='f2', silent=TRUE)
+
+raw_gg <- ggplot(data=df) + geom_point(aes(x=first, y=second))
+wrapped_gg <- gg_tex(raw_gg, label="fig:simple", caption="Simple Plot")
+
+appendize(tex1, tex2, raw_gg, wrapped_gg)
 ```

@@ -2,12 +2,12 @@ header <- function(text) {
   paste0('<th>', text, '</th>\n', collapse='')
 }
 
-row_el <- function(text, align=NA) {
-  style <- ''
-  if (!is.na(align)) {
-    style <- paste('style="text-align', align, '"')
-  }
-  paste0('<td ',style, '>', text, '</td>\n', collapse='')
+row_el <- function(text, align=NA, border=NA, colspan=NA) {
+  style <- cols <- ''
+  if (!is.na(align)) style <- paste('style="text-align:', align, '"')
+  if (!is.na(border)) style <- 'style="border-bottom: 1px solid black"'
+  if (!is.na(colspan)) cols <- paste('colspan="', colspan, '"', sep='')
+  paste0('<td ',cols, style, '>', text, '</td>\n', collapse='', sep='')
 }
 
 row_start <- function(text) {
@@ -64,9 +64,6 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     row_start(c(rel_c, rel_e, blank_row()))
   }))
 
-
-
-
   body <- paste(body, sep='')
 
   # Post
@@ -74,15 +71,15 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     row_start(row_el(c(fc, fit_char[[fc]]), 'left'))
   }))
 
-  p_post <- unlist(lapply(names(sig), function(s) {
-    paste0('<sup>',s, '>/sup><', sig[[s]], ' ', collapse='')
-  }))
-  ## TODO Finish
-  p_post <- row_start(c(row_el('Note:', 'left'), row_el(p_post, 'right'))) # Maybe...? Need to check
-  #<tr><td style="text-align:left"><em>Note:</em></td><td style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+  p_post <- paste0(lapply(names(sig_levels), function(s) {
+    paste0('<sup>', s, '</sup>p<', sig_levels[[s]], ' ', collapse='')
+  }), collapse='')
 
+
+  ## TODO Finish
+  p_post <- paste0(row_start((row_el('', colspan=3))),
+                   row_start(paste0(row_el(paste0('<em>Note: </em>', note, collapse=''), 'left'),
+                                    row_el(p_post, 'right', colspan=2), collapse='')))
   post <- '</table>'
-  #writeLines(c(preamble, body, hr, fit, hr, post))
-  #paste0(preamble,post, body, sep="\n", collapse='')
-  c(preamble, body, hr, fit, hr, post)
+  c(preamble, body, hr, fit, hr, p_post, post)
 }

@@ -4,13 +4,13 @@
 \alias{describe}
 \title{Formats Summary Tables to Text, LaTeX, and HTML}
 \usage{
-describe(df, note = "", silent = F, path = NA, max_precision = 6,
+describe(data, note = "", silent = F, path = NA, max_precision = 6,
   statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min =
   min, Max = max), md = NA, landscape = FALSE, label = "sumStats",
-  title = "Summary statistics", header = TRUE)
+  title = "Summary statistics", header = TRUE, as_table = FALSE)
 }
 \arguments{
-\item{df}{Dataframe of variables.}
+\item{data}{Dataframe of variables.}
 
 \item{note}{Optional note displayed at bottom of table.}
 
@@ -22,6 +22,19 @@ describe(df, note = "", silent = F, path = NA, max_precision = 6,
 
 \item{statistics}{A list of functions to be applied to each column of the data frame or tibble.
 Each function must be vectorized.}
+
+\item{md}{Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
+The Markdown chunk must be set to \code{results = "asis"}.}
+
+\item{landscape}{If true, the Latex table will be landscaped.}
+
+\item{label}{Latex label.}
+
+\item{title}{Table title.}
+
+\item{header}{Includes RCHITEX header as a Latex comment if true.}
+
+\item{as_table}{True values wrap the underlying Latex Tabular object in a table.}
 }
 \value{
 None

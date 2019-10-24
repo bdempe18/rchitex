@@ -20,7 +20,8 @@ Suggests:
     testthat (>= 2.1.0),
     spelling,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2
 Language: en-US
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

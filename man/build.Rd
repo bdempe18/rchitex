@@ -2,13 +2,13 @@
 % Please edit documentation in R/build.R
 \name{build}
 \alias{build}
-\title{Formats Tables to Text, LaTeX, and HTML}
+\title{Formats Regression Tables to Text, LaTeX, and HTML}
 \usage{
-build(..., dep_names = NA, indep_names = NA, note = "",
-  title = "Model results", max_precision = 3, path = NA,
+build(..., dep_names = NA, indep_names = NULL, note = "",
+  title = "Model results", max_precision = 3, path = NULL,
   rse = FALSE, silent = FALSE, landscape = FALSE, report = "p",
   stats = "oraf", pre_stats = NA, md = NA, header = TRUE,
-  label = "table", sig = NA)
+  label = "table", sig = NULL, as_table = TRUE)
 }
 \arguments{
 \item{...}{Regression models to be included in Table.  Table will display models in the same order as provided.}
@@ -29,32 +29,34 @@ build(..., dep_names = NA, indep_names = NA, note = "",
 
 \item{silent}{No text output if true.}
 
-\item{landscape}{Formats tex table as landscape if true. If landscape is true, make sure to add to include
-\code{\\documentclass{lscape}} in your LaTeX code.}
+\item{landscape}{If true, the Latex table will be landscaped.}
 
 \item{report}{Test statistic to be provided along with the coefficient.
 Must be either "p", "t", or "ste". Default value is "p".}
 
 \item{stats}{Fit characteristics to be provided at bottom of table. Must be a string of reporters.
 Options include "o" for number of observations, "r" for R2, "a" for adjusted R2 and "f" for f-statistic.
-The inputted string determines the order of outputted reporters. Ex \code{stats='oraf'}.}
+The inputted string determines the order of outputted reporters. See vignette for full list of
+possible values. Ex \code{stats='oraf'}.}
 
 \item{pre_stats}{List of optional reporters to be provided above normal fit characteristics.
 The list must be formatted as the name of the reporter followed by a a vector of values.
 Ex \code{pre_stats=list('R.St.E' = c('True', 'True'))}.}
 
-\item{md}{The markdown parameter allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
+\item{md}{Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
 The Markdown chunk must be set to \code{results = "asis"}.}
 
-\item{header}{Outputs RCHITEX header if true.}
+\item{header}{Includes RCHITEX header as a Latex comment if true.}
 
 \item{label}{Latex label.}
 
 \item{sig}{List containing the associations between significance symbols and cut-off p values.
 List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).}
+
+\item{as_table}{True values wrap the underlying Latex Tabular object in a table.}
 }
 \value{
-Invisible return containing a list of model attributes.
+Invisible return containing rchitex object.
 }
 \description{
 Given a linear regression model, \code{build} constructs a formatted
