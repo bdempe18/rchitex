@@ -1,4 +1,4 @@
-#' rchitex: Streamlining the transition from R to LaTeX
+#' rchitex: streaming the transition from R exploration to article writing
 #'
 #' The rchitex package is designed to facilitate the creation
 #' of LaTeX articles from R models. rchitex provides
@@ -12,6 +12,13 @@
 #'
 #' Along with text output, rchitex supports latex and html output, making the
 #' package optimal for use in Markdown files.
+#'
+#' @section Supported models:
+#'
+#' \describe{
+#'   \item{\emph{stats}}{lm, glm}
+#'   \item{\emph{plm}}{plm}
+#' }
 #'
 #' @docType package
 #' @name rchitex

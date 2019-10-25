@@ -15,12 +15,25 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   lengths <- do.call(rbind, lengths)
   lengths <- unlist(Map(max, fit_lengths, apply(lengths, 2, max, na.rm=TRUE)))
   lengths <- c(longest_idvn, lengths)
+
+  # row of p-val cut offs at
+  p_row <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')
+
+  # the minimum width of a table is the space it takes to print "sig..p < 0.1"....
+  # if the minimum width is not met, the difference is made up in the label col
+
   line_width <- sum(lengths) + 5 * (n_mods - 1) + 5 # corrected for white space between cols
+  if (line_width - nchar(p_row) - nchar("Sig:") < 0) {
+    big_line <- nchar('Sig:') + nchar(p_row)
+    lengths[1] <- big_line - line_width
+    line_width <- big_line
+  }
+
 
   tbl <- paste0(center(toupper(title), line_width - nchar(title)), '\n')
   # preamble
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
-  tbl <- paste0(tbl, strrep(' ', longest_idvn + 5), collapse='')
+  tbl <- paste0(tbl, strrep(' ', lengths[1] + 5), collapse='')
   tbl <- paste0(tbl, paste0(center(dn, lengths[2:length(lengths)] -
                                      nchar(dn)), collapse=''),
                 '\n', collapse='')
@@ -57,11 +70,10 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
   tbl <- paste0(tbl, 'Sig: ', collapse='')
 
-  # row of p-val cut offs at
-  txt <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')
-  txt <- paste0(strrep(' ', line_width-nchar(txt) - nchar('Sig:')),
-                txt, collapse='')
-  tbl <- paste0(tbl, txt, sep='\n', collapse='')
+  p_row <- paste0(strrep(' ', line_width-nchar(p_row) - nchar('Sig:')),
+                  p_row, collapse='')
+
+  tbl <- paste0(tbl, p_row, sep='\n', collapse='')
 
   tbl
 }

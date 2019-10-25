@@ -112,6 +112,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})
   names(b$coefs) <- names(idn)
+
   b$reporter <- lapply(names(idn), function(var_name)  {
     unlist(extract_reporter(var_name, report))})
   names(b$reporter) <- names(idn)
@@ -137,6 +138,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
                         fit_char = b$fits, reporter=b$reporter,
                         sig = b$sig, note = note,
                         title = title, idn=b$i_names, sig_levels = sig)
+    b$code <- paste0(b$code, collapse='')
   }
 
   #TODO add header
@@ -145,6 +147,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   if ((is.null(md) || md=='latex' || md == 'tex') &&  landscape) code <- lan_wrap(table_wrap(code))
   else if ((is.null(md) || md=='latex' || md == 'tex') && as_table) code <- table_wrap(code)
 
+  if (header) code <- gen_header(code, md)
   if (!is.null(md)) writeLines(code, con=stdout())
   if (!is.null(path)) writeLines(code, con=path)
   invisible(b)

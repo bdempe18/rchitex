@@ -1,4 +1,4 @@
----
+  ---
 title: "The Master Rchitext"
 output: rmarkdown::html_vignette
 vignette: >
@@ -87,10 +87,10 @@ with a valid numeric p value cutoff between 0 and 1. The list must be decreasing
 Default table names can be overwritten by providing a `title` parameter. Likewise, short notes can be displayed at the bottom of the table by passing a string to the `note` parameter.
 
 ``` {r titleNotes, results='asis'}
-  title <-'Goofy table'
-  note <-  'My note'
-  build(mod, mod2, indep_names=id_names, md='html', sig=sig,
-      title=title, note=note)
+    title <-'Goofy table'
+    note <-  'My note'
+    build(mod, mod2, indep_names=id_names, md='html', sig=sig,
+        title=title, note=note)
 ```  
 
 ### Addition fit characteristics
@@ -149,6 +149,7 @@ tex2 <- build(mod2, label='f2', silent=TRUE)
 
 raw_gg <- ggplot(data=df) + geom_point(aes(x=first, y=second))
 wrapped_gg <- gg_tex(raw_gg, label="fig:simple", caption="Simple Plot")
+fp <- paste(getwd(), 'rchitEx', sep='/')
 
-appendize(tex1, tex2, raw_gg, wrapped_gg)
+appendize(tex1, tex2, raw_gg, wrapped_gg, dir=fp)
 ```

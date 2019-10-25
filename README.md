@@ -5,19 +5,22 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Travis build
 status](https://travis-ci.org/bdempe18/rchitex.svg?branch=master)](https://travis-ci.org/bdempe18/rchitex)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/bdempe18/rchitex?branch=master&svg=true)](https://ci.appveyor.com/project/bdempe18/rchitex)
-[![Codecov test
-coverage](https://codecov.io/gh/bdempe18/rchitex/branch/master/graph/badge.svg)](https://codecov.io/gh/bdempe18/rchitex?branch=master)
 <!-- badges: end -->
 
-The goal of rchitex is to …
+RCHITEX provides an extensive set of options allowing users to generate
+and output nicely formatted text tables wiles simultaneously outputting
+the equivalent Latex code to a provided path. rchitex is intended to
+bridge the gap between statistical exploration in R and article writing.
 
 ## Installation
 
-You can install the released version of rchitex from
+You will be able to install the released version of rchitex from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
@@ -31,35 +34,47 @@ And the development version from [GitHub](https://github.com/) with:
 devtools::install_github("bdempe18/rchitex")
 ```
 
-## Example
+Until development exceeds the experimental phase, the package will only
+be available on github.
 
-This is a basic example which shows you how to solve a common problem:
+## Usage
+
+Rchitex was designed to produce underlying Latex code for regression
+tables and summary statistics while also providing an informative text
+display in the console. Rchitex can also directly output Latex and html
+which can be formatted with knitr and RMarkdown. The `build` method
+allows for the construction of heavily customizable regression tables.
+The `describe` method similarly allows for the construction of
+descriptive statistics tables originating from either a data frame,
+matrix, matrix, or tibble.
 
 ``` r
-library(rchitex)
-## basic example code
+data('freeny')
+mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level + 
+            market.potential, data = freeny)
+mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
+           data = freeny)
+
+# regression table
+b <- build(mod1, mod, md='latex')
+
+# summary statistics
+df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
+d <- describe(df, md='html')
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+A full Latex appendix can be generated from any number of rchitex and
+ggplot object. The `appendize` function will save each table/plot in an
+organized tree structure and generate an *appendix.tex* file which
+presents each table/plot on a separate page all under an Appendix
+section label.
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+fp <- paste(getwd(), 'rchitEx', sep='/')
+appendize(b, d, dir=fp)
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+## Tutorial
 
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
+A full tutorial of all features and available customization is available
+in the Usage vignette that comes with the package.
