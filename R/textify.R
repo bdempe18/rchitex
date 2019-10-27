@@ -5,6 +5,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   n_mods <- length(coefs[[1]])
   dn <- paste0('(', seq(1,n_mods),')')
   longest_idvn <- max(nchar(idvn))
+  print(longest_idvn)
 
   # calculates the maximum space needed in each column
   lengths <- lapply(names(idvn), function(ivar) nchar(coefs[[ivar]]) +
@@ -15,7 +16,6 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   lengths <- do.call(rbind, lengths)
   lengths <- unlist(Map(max, fit_lengths, apply(lengths, 2, max, na.rm=TRUE)))
   lengths <- c(longest_idvn, lengths)
-
   # row of p-val cut offs at
   p_row <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')
 
@@ -25,7 +25,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   line_width <- sum(lengths) + 5 * (n_mods - 1) + 5 # corrected for white space between cols
   if (line_width - nchar(p_row) - nchar("Sig:") < 0) {
     big_line <- nchar('Sig:') + nchar(p_row)
-    lengths[1] <- big_line - line_width
+    lengths[1] <- big_line - line_width + lengths[1]
     line_width <- big_line
   }
 
@@ -38,8 +38,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
                                      nchar(dn)), collapse=''),
                 '\n', collapse='')
   tbl <- paste0(tbl, strrep('~', line_width), '\n', collapse='')
-
-  tbl_text <- lapply(names(idvn), function(iv) {
+    tbl_text <- lapply(names(idvn), function(iv) {
     ests <- ifelse(is.na(coefs[[iv]]),
                           '', paste0(coefs[[iv]], sigs[[iv]]))
     spaces <- lengths[2:length(lengths)] - nchar(ests)

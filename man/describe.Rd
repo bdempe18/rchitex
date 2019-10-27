@@ -7,7 +7,8 @@
 describe(data, note = "", silent = F, path = NA, max_precision = 6,
   statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min =
   min, Max = max), md = NA, landscape = FALSE, label = "sumStats",
-  title = "Summary statistics", header = TRUE, as_table = FALSE)
+  title = "Summary statistics", header = TRUE, as_table = FALSE,
+  flip = FALSE)
 }
 \arguments{
 \item{data}{Dataframe of variables.}
@@ -35,6 +36,8 @@ The Markdown chunk must be set to \code{results = "asis"}.}
 \item{header}{Includes RCHITEX header as a Latex comment if true.}
 
 \item{as_table}{True values wrap the underlying Latex Tabular object in a table.}
+
+\item{flip}{Invert tables when set to TRUE.}
 }
 \value{
 None

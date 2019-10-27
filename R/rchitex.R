@@ -18,6 +18,7 @@
 #' \describe{
 #'   \item{\emph{stats}}{lm, glm}
 #'   \item{\emph{plm}}{plm}
+#'   \item{\emph{AER}}{ivreg}
 #' }
 #'
 #' @docType package

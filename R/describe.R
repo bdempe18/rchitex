@@ -18,6 +18,7 @@
 #' @param title Table title.
 #' @param header Includes RCHITEX header as a Latex comment if true.
 #' @param as_table True values wrap the underlying Latex Tabular object in a table.
+#' @param flip Invert tables when set to TRUE.
 #'
 #' @examples
 #' df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
@@ -35,7 +36,7 @@ describe <- function(data, note='', silent = F, path = NA, max_precision = 6,
                                       'Min' = min,
                                       'Max' = max),
                      md = NA, landscape=FALSE, label='sumStats', title="Summary statistics",
-                     header=TRUE, as_table=FALSE) {
+                     header=TRUE, as_table=FALSE, flip=FALSE) {
   UseMethod("describe")
 }
 
@@ -47,7 +48,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
                                        'Min' = min,
                                        'Max' = max),
                      md = NULL, landscape=FALSE, label='sumStats', title="Summary statistics",
-                     header=TRUE, as_table=FALSE) {
+                     header=TRUE, as_table=FALSE, flip=FALSE) {
 
   validate(md=md, max_precision=max_precision)
 
@@ -76,6 +77,14 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
   #if (ncol(d$data) != length(names(statistics)))  stop('Descriptive functions must be vectorized')
   colnames(d$data) <- names(statistics)
 
+  # flips table if necessary
+  if (flip) {
+    temp_data <- t(d$data)
+    colnames(temp_data) <- rownames(d$data)
+    rownames(temp_data) <- colnames(d$data)
+    d$data <- temp_data
+  }
+
   d$options$table <- as_table
   d$options$landscape <- landscape
   d$options$type <- ifelse(is.null(md), "latex", md)
@@ -103,14 +112,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
   invisible(d)
 }
 
-describer.function <- function(data, note='', silent = F, path = NA, max_precision = 6,
-                              statistics = list('N' = length,
-                                                'Mean' = mean,
-                                                'St. Dev' = stats::sd,
-                                                'Min' = min,
-                                                'Max' = max),
-                              md = NA, landscape=FALSE, label='sumStats', title="Summary statistics",
-                              header=TRUE) {
+describer.function <- function(...) {
   stop('How did we get here?!')
 }
 
