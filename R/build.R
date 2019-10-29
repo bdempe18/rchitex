@@ -108,7 +108,8 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
 
   if (!is.null(md)) md <- tolower(md)
   b$i_names <- idn
-  b$fits <- get_fits(mods, stats=stats, pre_stats=pre_stats, round_n)
+  b$fits <- get_fits(mods, stats=stats, pre_stats=pre_stats, roundr=round_n,
+                     sig=sig)
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})
   names(b$coefs) <- names(idn)

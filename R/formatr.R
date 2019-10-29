@@ -52,14 +52,23 @@ get_ar2 <- function(mod, mod_class) {
   out
 }
 
-get_fits <- function(mods, stats='all', roundr, pre_stats=NA) {
+get_wald <- function(mod, sig, roundr) {
+  wald <- roundr(summary(mod)$wald)
+  p_val <- lmtest::waldtest(mod)[[4]][2]
+
+  paste0(wald, sig_at(p_val, sig=sig), collapse='')
+
+}
+
+get_fits <- function(mods, stats='all', roundr, sig, pre_stats=NA) {
   # <-- function returns a list of fit values
   # in the form of a list -->
 
-  fit_lst <- list('lm'  = 'oraf',
-                  'glm' = 'olc',
-                  'plm' = 'oraf',
-                  'ivreg' = 'oras')
+  fit_lst <- list('lm'    = 'oraf',
+                  'glm'   = 'olc',
+                  'plm'   = 'oraf',
+                  'ivreg' = 'oras',
+                  'tobit' = 'olw')
 
   # mods may need to be coerced to list
   # TODO: DEAL WITH ROBUST STANDARD ERRORS
@@ -74,7 +83,8 @@ get_fits <- function(mods, stats='all', roundr, pre_stats=NA) {
                    f_to_string(roundr(summary(m)$fstatistic), class(m)[1]) },
                  "AIC"            = function(m) summary(m)$aic,
                  "Log Likelihood" = function(m) stats::logLik(m)[1],
-                 "Res. SE"        = function(m) summary(m)$sigma)
+                 "Res. SE"        = function(m) summary(m)$sigma,
+                 "Wald Test"      = function(m) get_wald(m, sig, roundr))
   # if stats are specificed, just spc vals are searched
   if (stats == 'all') {
     stats <- lapply(mods, class)
@@ -88,7 +98,8 @@ get_fits <- function(mods, stats='all', roundr, pre_stats=NA) {
                   'r' = 'R2',
                   'o' = 'Observations',
                   'l' = 'Log Likelihood',
-                  's' = 'Res. SE')
+                  's' = 'Res. SE',
+                  'w' = 'Wald Test')
   includes <- unique(unlist(strsplit(tolower(stats), '')))
   includes <- aliases[unlist(includes)]
   fit_char <- lapply(names(includes), function(p) {

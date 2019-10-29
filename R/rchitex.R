@@ -18,7 +18,7 @@
 #' \describe{
 #'   \item{\emph{stats}}{lm, glm}
 #'   \item{\emph{plm}}{plm}
-#'   \item{\emph{AER}}{ivreg}
+#'   \item{\emph{AER}}{ivreg, tobit}
 #' }
 #'
 #' @docType package

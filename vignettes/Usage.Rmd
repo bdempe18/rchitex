@@ -103,7 +103,8 @@ Rchitex allows for simple customization of the fit characteristics at the bottom
 * r = R2
 * o = Number of observations
 * l = Log likelihood
-* s = residual standard error
+* s = Residual standard error
+* w = Wald test
 
 To customize the fit listing, a single string of characters needs to be passed to the `stats` parameter. For example, if you want just want to list the R2 and number of observations in that order, set `stats = "ro"`.
 

@@ -26,7 +26,7 @@ package optimal for use in Markdown files.
 \describe{
   \item{\emph{stats}}{lm, glm}
   \item{\emph{plm}}{plm}
-  \item{\emph{AER}}{ivreg}
+  \item{\emph{AER}}{ivreg, tobit}
 }
 }
 
