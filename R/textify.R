@@ -1,11 +1,9 @@
 model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
                        sig_levels,
                        title = 'Regression Results',
-                       note = '') {
+                       note = '', dn) {
   n_mods <- length(coefs[[1]])
-  dn <- paste0('(', seq(1,n_mods),')')
   longest_idvn <- max(nchar(idvn))
-  print(longest_idvn)
 
   # calculates the maximum space needed in each column
   lengths <- lapply(names(idvn), function(ivar) nchar(coefs[[ivar]]) +
@@ -13,8 +11,10 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   fit_lengths <- lapply(fits, function(fc) nchar(fc))
   fit_lengths <- do.call(rbind, fit_lengths)
   fit_lengths <- apply(fit_lengths, 2, max, na.rm=TRUE)
+  dep_name_lengths <- Map(nchar, dn)
   lengths <- do.call(rbind, lengths)
   lengths <- unlist(Map(max, fit_lengths, apply(lengths, 2, max, na.rm=TRUE)))
+  lengths <- unlist(Map(max, lengths, dep_name_lengths))
   lengths <- c(longest_idvn, lengths)
   # row of p-val cut offs at
   p_row <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')

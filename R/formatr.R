@@ -56,7 +56,7 @@ get_wald <- function(mod, sig, roundr) {
   wald <- roundr(summary(mod)$wald)
   p_val <- lmtest::waldtest(mod)[[4]][2]
 
-  paste0(wald, sig_at(p_val, sig=sig), collapse='')
+  paste0(wald, sig_at(p_val, sigs=sig), collapse='')
 
 }
 

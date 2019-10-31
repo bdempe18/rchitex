@@ -21,9 +21,9 @@ summary2tex <- function(stats_mat, note='') {
 }
 
 to_tex_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
-                     path = NA, note='', title='', idn = NULL, sig_levels) {
+                     path = NA, note='', title='', idn = NULL, sig_levels, dn) {
   n_mods <- length(reg_data[[1]])
-  col_names <- paste0('(', 1:n_mods,')', sep=' & ', collapse='')
+  col_names <- paste0(dn, sep=' & ', collapse='')
   col_names <- substr(col_names, 1, nchar(col_names) - 3)
 
   # Preamble

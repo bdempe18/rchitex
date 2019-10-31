@@ -61,6 +61,10 @@ build(mod, mod2, md = 'html')
 
 ### Variable Names
 
+Independent variable names can be customized by passing a list associating variable names with the desired output format. Names exluded from the list will be excluded from the table.
+
+Dependent variable names can be customized by passing a character vector of desired model labels. By default, the models are numbered (1), (2), (3) as shown in the previous chunk. Passing a NA value to the `dep_names` parameter result in the dependent variable name of the model being used. 
+
 Variable names can be customized by passing a list associating variable names with the desired output format. 
 
 ```{r formatting, results='asis'}
@@ -68,6 +72,7 @@ id_names <- list('price.index' = 'Price index',
                  'income.level' = 'Income level',
                  'market.potential' = 'Market potential',
                  'lag.quarterly.revenue' = 'Lagged rev')
+dep_names <- c('Model1', 'Model2')
 ```
 
 ### Level of significance 
@@ -90,7 +95,7 @@ Default table names can be overwritten by providing a `title` parameter. Likewis
     title <-'Goofy table'
     note <-  'My note'
     build(mod, mod2, indep_names=id_names, md='html', sig=sig,
-        title=title, note=note)
+        title=title, note=note, dep_names=dep_names)
 ```  
 
 ### Addition fit characteristics

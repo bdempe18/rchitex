@@ -5,7 +5,8 @@
 #'   outputted to an provided file path.
 #'
 #' @param ... Regression models to be included in Table.  Table will display models in the same order as provided.
-#' @param dep_names List associating dependant variable names with desired names in table.
+#' @param dep_names Character vector of dependent variable names. Vector should be listed in the same order
+#'   that the models will be displayed (from left to right). If NULL, the columns will be numbers (e.g. (1), (2)....)
 #' @param indep_names List of names associating independent variable names with desired names in table.
 #' @param note Optional note displayed in bottom row of the table.
 #' @param title Title of the table.
@@ -62,6 +63,21 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   validate(md=md, max_precision=max_precision)
   mods <- list(...)
   idn <- format_indep_names(mods, indep_names)
+  # handles the case that no dep names are provided
+  if (is.null(dep_names)) dep_names <- paste0('(', seq(1,length(mods)),')')
+  # handles the case that dep names length exceeds # of models
+  else if (length(dep_names) > length(mods)) {
+    stop("Too many dependent variable names provided", call.=FALSE)
+    # handles the case that there are NAs in dep names or
+    # not enough dep names are provided
+  } else if (length(dep_names) < length(mods) | any(is.na(dep_names))) {
+    temp <- c(dep_names, rep(NA, length(mods) - length(dep_names)))
+    dep_names <- unlist(lapply(seq_along(temp), function(i) {
+      if (is.na(temp[i])) mods[[i]]$terms[[2]]
+      else temp[i]
+    }))
+  }
+
   round_n <- roundr_fac(max_precision=max_precision, min_digs=1)
 
   # converts reporters to list indices in a lm mod summary
@@ -113,7 +129,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})
   names(b$coefs) <- names(idn)
-
+  b$dep_names <- dep_names
   b$reporter <- lapply(names(idn), function(var_name)  {
     unlist(extract_reporter(var_name, report))})
   names(b$reporter) <- names(idn)
@@ -126,19 +142,21 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   names(b$sig) <- names(idn)
   x <- model2text(b$coefs, b$reporter, fits=b$fits, sigs=b$sig, idvn=b$i_names,
                   max_precision=max_precision, note=note,
-                  title=title, sig_levels=sig)
+                  title=title, sig_levels=sig, dn=b$dep_names)
   b$text <- x
   if (!silent & is.null(md)) writeLines(x, con=stdout())
   if (is.null(md) || (!is.null(md) && md == 'latex')) {
     b$code <- to_tex_m(reg_data = b$coefs, max_precision = max_precision,
                        fit_char = b$fits, reporter=b$reporter,
                        sig = b$sig, note = note,
-                       title = title, idn=b$i_names, sig_levels = sig)
+                       title = title, idn=b$i_names, sig_levels = sig,
+                       dn=b$dep_names)
   } else if (!is.null(md) && md == 'html') {
     b$code <- to_html_m(reg_data = b$coefs, max_precision = max_precision,
                         fit_char = b$fits, reporter=b$reporter,
                         sig = b$sig, note = note,
-                        title = title, idn=b$i_names, sig_levels = sig)
+                        title = title, idn=b$i_names, sig_levels = sig,
+                        col_names = b$dep_names)
     b$code <- paste0(b$code, collapse='')
   }
 

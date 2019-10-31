@@ -7,11 +7,11 @@ row_el <- function(text, align=NA, border=NA, colspan=NA) {
   if (!is.na(align)) style <- paste('style="text-align:', align, '"')
   if (!is.na(border)) style <- 'style="border-bottom: 1px solid black"'
   if (!is.na(colspan)) cols <- paste('colspan="', colspan, '"', sep='')
-  paste0('<td ',cols, style, '>', text, '</td>\n', collapse='', sep='')
+  paste0('<td ',cols, style, '>', text, '</td>', collapse='', sep='')
 }
 
 row_start <- function(text) {
-  paste0('<tr>', text, '</tr> \n')
+  paste0('<tr>', text, '</tr>')
 }
 
 blank_row <- function() {
@@ -30,28 +30,28 @@ to_html <- function(data, title='Summary statistics', header=TRUE) {
                     row_start(row_el(c('',colnames(data)))), hr)
   body <- unlist(lapply(rownames(data), function(r)
     row_start(row_el(c(r, data[r, ])))))
-  body <- paste(body, sep='', collapse='')
+  body <- paste(body, sep='\n', collapse='')
   post <- '</table>'
   paste(preamble, body, post, sep='', collapse='')
 
 }
 
 to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
-                      path = NA, note='', title='', idn = NULL, sig_levels)  {
+                      path = NA, note='', title='', idn = NULL, sig_levels,
+                      col_names)  {
 
   # Preamble
   citation <- '<-- Table generating using RCHITEX by Ben Dempe (2019) -->'
   n_mods <- length(reg_data[[1]])
-  col_names <- paste0('(', 1:n_mods, ')')
   col_width <- paste('<col width=175>\n', strrep('<col width=120em>\n', n_mods))
   hr <- row_start(paste('<td colspan="', n_mods + 1,
                         '" style="border-bottom: 1px solid black"></td>', sep=''))
 
 
   preamble <- paste('<table style = "text-align: center;">',
-                 '<caption>', title, '</caption>', hr,
+                 '<caption>', title, '</caption>', '\n', hr, '\n',
   row_start('<td style="text-align:left"></td>'),
-  row_start(row_el(c('',col_names))), hr)
+  row_start(row_el(c('',col_names))),'\n',hr,'\n')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -59,17 +59,22 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
                                                     '<sup>', sig[[r]], '</sup>'))
     errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
                                                    sep=''))
-    rel_c <- row_el(c(idn[[r]], ests), 'left')
-    rel_e <- row_el(c(' ', errs), 'left')
+    lab <- row_el(idn[[r]], 'left')
+    rel_c <- row_el(ests)
+    rel_c <- paste0(lab, rel_c, collapse='')
+    rel_e <- row_el(c(' ', errs))
     row_start(c(rel_c, rel_e, blank_row()))
   }))
 
-  body <- paste(body, sep='')
+  body <- paste0(body, sep='\n', collapse='')
 
   # Post
   fit <- unlist(lapply(names(fit_char), function(fc) {
-    row_start(row_el(c(fc, fit_char[[fc]]), 'left'))
+    lab <- row_el(fc, 'left')
+    rw <- row_el(fit_char[[fc]])
+    row_start(paste0(lab, rw, collapse=''))
   }))
+  fit <- paste0(fit, sep='', collapse='\n')
 
   p_post <- paste0(lapply(names(sig_levels), function(s) {
     paste0('<sup>', s, '</sup>p<', sig_levels[[s]], ' ', collapse='')

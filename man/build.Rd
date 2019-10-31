@@ -13,7 +13,8 @@ build(..., dep_names = NA, indep_names = NULL, note = "",
 \arguments{
 \item{...}{Regression models to be included in Table.  Table will display models in the same order as provided.}
 
-\item{dep_names}{List associating dependant variable names with desired names in table.}
+\item{dep_names}{Character vector of dependent variable names. Vector should be listed in the same order
+that the models will be displayed (from left to right). If NULL, the columns will be numbers (e.g. (1), (2)....)}
 
 \item{indep_names}{List of names associating independent variable names with desired names in table.}
 
