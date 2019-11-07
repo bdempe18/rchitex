@@ -31,34 +31,42 @@
 #' @param sig List containing the associations between significance symbols and cut-off p values.
 #'   List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).
 #' @param as_table True values wrap the underlying Latex Tabular object in a table.
+#' @param grouped_label Optional label printed above model names that group models together.
+#'   Expected format is a list of the name and a vector of the start and end columns.
 #'
 #' @return Invisible return containing rchitex object.
 #'
 #' @examples
-#' data('freeny')
-#' mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level +
-#'            market.potential, data = freeny)
-#' mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level,
-#'           data = freeny)
-#' d <- list('price.index' = 'Price index', 'income.level' = 'Income level',
-#'          'market.potential' = 'Market potential',
-#'          'lag.quarterly.revenue' = 'Lagged rev')
-#' pre <- list('R. St. E' = c('True', 'True'))
-#' build(mod, mod2, rse = T, indep_names = d, pre_stats = pre)
+#' library(rchitex)
+#' data(swiss)
+#'
+#' mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
+#' mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
+#' lmod <- glm(data=swiss, I(Fertility > mean(Fertility)) ~ Agriculture +
+#'               Education + Infant.Mortality + Catholic + Examination,
+#'             family=binomial(link='logit'))
+#'
+#' indep_names <- list('Agriculture' = "Agriculture share", 'Education' = 'Total education',
+#'                     'Infant.Mortality' = 'Infant Mortality',
+#'                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
+#' dep_names <- c('Fert.', 'Fert.', 'Fert.')
+#' grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
+#' pre_stats <- list('Full dataset' = c('No', 'Yes', 'Yes'))
+#' sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
 #' @export
-build <- function(..., dep_names = NA, indep_names = NULL, note='', title = 'Model results',
+build <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
          max_precision = 3, path = NULL, rse = FALSE,
-         silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NA,
-         md = NA, header = TRUE, label='table', sig = NULL, as_table=TRUE) {
+         silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NULL,
+         md = NULL, header = TRUE, label='table', sig = NULL, as_table=TRUE, grouped_label=NULL) {
   UseMethod("build")
 }
 
 #' @export
 build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
                           max_precision = 3, path = NULL, rse = FALSE,
-                          silent = FALSE, landscape = FALSE, report = 'p', stats='all', pre_stats=NA,
+                          silent = FALSE, landscape = FALSE, report = 'p', stats='all', pre_stats=NULL,
                           md = NULL, header = TRUE, label='table', sig = NULL,
-                          as_table=TRUE) {
+                          as_table=TRUE, grouped_label = NULL) {
   ## Add validations
   validate(md=md, max_precision=max_precision)
   mods <- list(...)
@@ -142,7 +150,8 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   names(b$sig) <- names(idn)
   x <- model2text(b$coefs, b$reporter, fits=b$fits, sigs=b$sig, idvn=b$i_names,
                   max_precision=max_precision, note=note,
-                  title=title, sig_levels=sig, dn=b$dep_names)
+                  title=title, sig_levels=sig, dn=b$dep_names,
+                  grouped_label=grouped_label)
   b$text <- x
   if (!silent & is.null(md)) writeLines(x, con=stdout())
   if (is.null(md) || (!is.null(md) && md == 'latex')) {
@@ -150,13 +159,13 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
                        fit_char = b$fits, reporter=b$reporter,
                        sig = b$sig, note = note,
                        title = title, idn=b$i_names, sig_levels = sig,
-                       dn=b$dep_names)
+                       dn=b$dep_names, grouped_label=grouped_label)
   } else if (!is.null(md) && md == 'html') {
     b$code <- to_html_m(reg_data = b$coefs, max_precision = max_precision,
                         fit_char = b$fits, reporter=b$reporter,
                         sig = b$sig, note = note,
                         title = title, idn=b$i_names, sig_levels = sig,
-                        col_names = b$dep_names)
+                        col_names = b$dep_names, grouped_label=grouped_label)
     b$code <- paste0(b$code, collapse='')
   }
 

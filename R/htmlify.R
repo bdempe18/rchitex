@@ -24,7 +24,7 @@ to_html <- function(data, title='Summary statistics', header=TRUE) {
     '')
   hr <- row_start(paste('<td colspan="', ncol(data) + 1,
                         '" style="border-bottom: 1px solid black"></td>', sep=''))
-  preamble <- paste('<table style = "text-align: center;">',
+  preamble <- paste('<table style = "text-align: center;" cellingpadding=100px>',
                     '<caption>', title, '</caption>', hr,
                     row_start('<td style="text-align:left"></td>'),
                     row_start(row_el(c('',colnames(data)))), hr)
@@ -38,7 +38,7 @@ to_html <- function(data, title='Summary statistics', header=TRUE) {
 
 to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
                       path = NA, note='', title='', idn = NULL, sig_levels,
-                      col_names)  {
+                      col_names, grouped_label=NULL)  {
 
   # Preamble
   citation <- '<-- Table generating using RCHITEX by Ben Dempe (2019) -->'
@@ -47,11 +47,17 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   hr <- row_start(paste('<td colspan="', n_mods + 1,
                         '" style="border-bottom: 1px solid black"></td>', sep=''))
 
+  # grouped labels
+  if (!is.null(grouped_label)) {
+    h <- group_labels(grouped_label, n_mods, TRUE)
+    h <- row_start(paste0(row_el(''), paste0(h, collapse=''), collapse=''))
+  } else h <- ''
 
   preamble <- paste('<table style = "text-align: center;">',
-                 '<caption>', title, '</caption>', '\n', hr, '\n',
+                 '<caption>', title, '</caption>', '\n', hr, '\n', h,
   row_start('<td style="text-align:left"></td>'),
   row_start(row_el(c('',col_names))),'\n',hr,'\n')
+
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -63,7 +69,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     rel_c <- row_el(ests)
     rel_c <- paste0(lab, rel_c, collapse='')
     rel_e <- row_el(c(' ', errs))
-    row_start(c(rel_c, rel_e, blank_row()))
+    paste0(row_start(c(rel_c, rel_e)), blank_row())
   }))
 
   body <- paste0(body, sep='\n', collapse='')
@@ -77,14 +83,14 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   fit <- paste0(fit, sep='', collapse='\n')
 
   p_post <- paste0(lapply(names(sig_levels), function(s) {
-    paste0('<sup>', s, '</sup>p<', sig_levels[[s]], ' ', collapse='')
+    paste0('<sup>', s, '</sup>p&lt;', sig_levels[[s]], ' ', collapse='')
   }), collapse='')
 
 
   ## TODO Finish
   p_post <- paste0(row_start((row_el('', colspan=3))),
                    row_start(paste0(row_el(paste0('<em>Note: </em>', note, collapse=''), 'left'),
-                                    row_el(p_post, 'right', colspan=2), collapse='')))
+                                    row_el(p_post, 'right', colspan=n_mods), collapse='')), collapse='')
   post <- '</table>'
   c(preamble, body, hr, fit, hr, p_post, post)
 }

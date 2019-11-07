@@ -7,6 +7,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<style>
+
+table, td, th {
+  border: none;
+  padding-left: 1em;
+  padding-right: 1em;
+  min-width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+</style>
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -56,7 +71,10 @@ build(mod, mod2, path=fp, sep='/'),
 The text output can be replaced with either latex or html output. This allows knitr to directly format the table when used in conjunction with RMarkdown. Note that in this case, the results argument in the markdown chunk needs to be set to 'asis'. 
 
 ```{r htmlOverview, results='asis'}
-build(mod, mod2, md = 'html')
+#build(mod, mod2, mod, mod2, mod, mod2, grouped_label = list('first'=c(1,3), "Bonus"=3, "Extra"=5))
+
+#build(mod, mod2, md = 'html')
+build(mod, mod2, mod, mod2, mod, mod2, grouped_label = list('first'=c(1,3), "Bonus"=4, "Extra"=5), md='html')
 ```
 
 ### Variable Names
@@ -119,9 +137,22 @@ You may also provide your own lists to be included in the fit characterization s
 stats = 'ro'
 pre_stats <- list("Full sample" = c("Yes", "No"))
 
-  build(mod, mod2, indep_names=id_names, md='html', sig=sig,
+build(mod, mod2, indep_names=id_names, md='html', sig=sig,
       title=title, note=note, stats=stats, pre_stats=pre_stats)
 ```
+
+### Model labeling
+
+Occasionally you may want to specify that specific columns belong together (e.g. columns 1 through 3 are OLS while column 4 is a logit). Grouped labels can be activated by passing a list of labels and their associated columns to the `grouped_label parameter. The value of each lable should be a vector of length 1 or 2 signaling the first and last column in the grouping. For groups of size 1, you may pass a single number specifying the intended column.
+
+``` {r grouping, results='asis'}
+groups <- list("OLS" = c(1,2), "Repeat" = 3, "Extra" = 4)
+
+build(mod, mod2, mod, mod2, indep_names=id_names, md='html', sig=sig,
+      title=title, note=note, stats=stats, pre_stats=pre_stats,
+      grouped_label=groups)
+```
+
 
 ## Descriptive statistics
 

@@ -1,7 +1,8 @@
 model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
                        sig_levels,
                        title = 'Regression Results',
-                       note = '', dn) {
+                       note = '', dn,
+                       grouped_label=NULL) {
   n_mods <- length(coefs[[1]])
   longest_idvn <- max(nchar(idvn))
 
@@ -33,6 +34,56 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   tbl <- paste0(center(toupper(title), line_width - nchar(title)), '\n')
   # preamble
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
+
+  # grouped labels if applicable
+  if (!is.null(grouped_label)) {
+
+    gl_vector <- group_labels(grouped_label, n_mods, missing=1)
+    temp <- names(gl_vector)
+    gl_vector <- as.numeric(gl_vector)
+    names(gl_vector) <- temp
+
+    # centered labels
+    gl <- lapply(seq_along(gl_vector), function(i) {
+      start_col <- if (i>1) sum(gl_vector[1:i-1]) + 2 else 2
+      if (is.na(names(gl_vector[i]))) {
+        return(strrep(' ', lengths[start_col] + 5))
+      }
+
+      x <- start_col + gl_vector[i]-1
+      col_width <- sum(lengths[start_col: x])
+      lab <- names(gl_vector[i])
+      return(center(lab, col_width + 5*(gl_vector[i]-1)- nchar(lab)))
+    })
+    tbl <- paste0(tbl, strrep(' ', lengths[1] + 5),
+                  paste0(gl, collapse=''), '\n', collapse='')
+
+    # dashed underline
+
+    gl <- lapply(seq_along(gl_vector), function(i) {
+      start_col <- if (i>1) sum(gl_vector[1:i-1]) + 2 else 2
+
+      if (is.na(names(gl_vector[i]))) {
+        return(strrep(' ', lengths[start_col] + 5))
+      }
+
+      # intermediate variable is here to fix a weird bug
+      x <- start_col + gl_vector[i]-1
+      col_width <- sum(lengths[start_col: x])
+
+      row <- paste0(strrep('-', col_width + 5*(gl_vector[i]-1)),
+                    strrep(' ', 5))
+      return(row)
+    })
+
+    # if len labs exceed line width, gl is truncated
+    gl <- strtrim(paste0(gl, collapse=''), line_width-lengths[1]-5)
+
+    tbl <- paste0(tbl, strrep(' ', lengths[1] + 5),
+                  gl, '\n', collapse='')
+  }
+
+
   tbl <- paste0(tbl, strrep(' ', lengths[1] + 5), collapse='')
   tbl <- paste0(tbl, paste0(center(dn, lengths[2:length(lengths)] -
                                      nchar(dn)), collapse=''),

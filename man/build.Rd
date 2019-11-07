@@ -4,11 +4,12 @@
 \alias{build}
 \title{Formats Regression Tables to Text, LaTeX, and HTML}
 \usage{
-build(..., dep_names = NA, indep_names = NULL, note = "",
+build(..., dep_names = NULL, indep_names = NULL, note = "",
   title = "Model results", max_precision = 3, path = NULL,
   rse = FALSE, silent = FALSE, landscape = FALSE, report = "p",
-  stats = "oraf", pre_stats = NA, md = NA, header = TRUE,
-  label = "table", sig = NULL, as_table = TRUE)
+  stats = "oraf", pre_stats = NULL, md = NULL, header = TRUE,
+  label = "table", sig = NULL, as_table = TRUE,
+  grouped_label = NULL)
 }
 \arguments{
 \item{...}{Regression models to be included in Table.  Table will display models in the same order as provided.}
@@ -55,6 +56,9 @@ The Markdown chunk must be set to \code{results = "asis"}.}
 List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).}
 
 \item{as_table}{True values wrap the underlying Latex Tabular object in a table.}
+
+\item{grouped_label}{Optional label printed above model names that group models together.
+Expected format is a list of the name and a vector of the start and end columns.}
 }
 \value{
 Invisible return containing rchitex object.
@@ -65,14 +69,20 @@ Given a linear regression model, \code{build} constructs a formatted
   outputted to an provided file path.
 }
 \examples{
-data('freeny')
-mod <- lm(y ~ lag.quarterly.revenue + price.index + income.level +
-           market.potential, data = freeny)
-mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level,
-          data = freeny)
-d <- list('price.index' = 'Price index', 'income.level' = 'Income level',
-         'market.potential' = 'Market potential',
-         'lag.quarterly.revenue' = 'Lagged rev')
-pre <- list('R. St. E' = c('True', 'True'))
-build(mod, mod2, rse = T, indep_names = d, pre_stats = pre)
+library(rchitex)
+data(swiss)
+
+mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
+mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
+lmod <- glm(data=swiss, I(Fertility > mean(Fertility)) ~ Agriculture +
+              Education + Infant.Mortality + Catholic + Examination,
+            family=binomial(link='logit'))
+
+indep_names <- list('Agriculture' = "Agriculture share", 'Education' = 'Total education',
+                    'Infant.Mortality' = 'Infant Mortality',
+                    'Catholic' = 'Catholic share', 'Examination' = 'Exam')
+dep_names <- c('Fert.', 'Fert.', 'Fert.')
+grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
+pre_stats <- list('Full dataset' = c('No', 'Yes', 'Yes'))
+sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
 }
