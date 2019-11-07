@@ -85,4 +85,10 @@ dep_names <- c('Fert.', 'Fert.', 'Fert.')
 grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
 pre_stats <- list('Full dataset' = c('No', 'Yes', 'Yes'))
 sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
+
+build(mod1, mod2, lmod, indep_names=indep_names, dep_names=dep_names,
+grouped_label=grouped_label, pre_stats=pre_stats, sig=sig,
+title='Example regression from Swiss dataset', report='t',
+stats='orc')
+
 }
