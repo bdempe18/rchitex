@@ -1,5 +1,8 @@
 ---
-output: github_document
+output: 
+  github_document:
+    toc: true
+    toc_depth: 2
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -20,9 +23,7 @@ knitr::opts_chunk$set(
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/bdempe18/rchitex?branch=master&svg=true)](https://ci.appveyor.com/project/bdempe18/rchitex)
 <!-- badges: end -->
 
-
-RCHITEX provides an extensive set of options allowing users to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent Latex code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
-
+Rchitex provides allows users to generate elegantly formatted text tables for summary statistics and regression models while simultaneously writing the equivalent LaTeX code for individual tables or full appendices to a local file. Rchitex is likewise capable of producing Latex and HTML tables for markdown files. Rchitex is intended to bridge the agp between statistical exploration in R and article writing.
 
 ## Installation
 
@@ -41,42 +42,43 @@ devtools::install_github("bdempe18/rchitex")
 
 Until development exceeds the experimental phase, the package will only be available on github.
 
-## Usage  
+## Text summary tables
 
-Rchitex was designed to produce underlying Latex code for regression tables and summary statistics while also providing an informative text display in the console. Rchitex can also directly output Latex and html which can be formatted with knitr and RMarkdown. The `build` method allows for the construction of heavily customizable regression tables. The `describe` method similarly allows for the construction of descriptive statistics tables originating from either a data frame, matrix, matrix, or tibble. 
+Summary statistics can be simply produced by passing a data frame or tibble to `describe`. 
 
-```{r ex1, results='asis'}
-library(rchitex)
-data('freeny')
-mod1 <- lm(y ~ lag.quarterly.revenue + price.index + income.level + 
-            market.potential, data = freeny)
-mod2 <- lm(y ~ lag.quarterly.revenue + price.index + income.level, 
-           data = freeny)
+``` {r textTables}
+suppressPackageStartupMessages(library(tidyverse))
+state_df <- as_tibble(datasets::state.x77)
+tbl_title <- 'State summary statistics'
+rchitex::describe(state_df, title = tbl_title)
 
-dep_names = c("All vars", "Restricted")
-idn <- list(lag.quarterly.revenue = "Lagged Rev (quarterly)",
-            price.index = "Price index",
-            income.level = 'Income level',
-            market.potential = "Market potential")
+```
+By default, describe will calculate the number of observations, mean, standard deviation, min, and max of the data. The summary functions applied can be altered and reordered by passing a named vector or list of functions to the `statistics` argument. The label of each function should be a string expressing how the function should be expressed in the table.
 
-addtional_labs <- list("Preferred" = c("Yes", "No"))
+Note that `describe` supports user-defined functions as long as the function maps a vector of data to a single value, $f: \mathbb{R}^d \mapsto \mathbb{R}$.
 
-# regression table
-(b <- build(mod1, mod2, md='html', dep_names=dep_names, indep_names=idn,
-            pre_stats = addtional_labs, stats='ora', report='t'))
+``` {r}
 
-# summary statistics
-df <- data.frame("first" = c(4,5,6), "second" = c(7,5,3))
-d <- describe(df, md='html')
+stat_funcs <- c('Average' = mean, 'St.D.' = sd, 
+                'random value' = function(v) sample(v, 1))
+rchitex::describe(state_df, title = tbl_title, statistics = stat_funcs)
+
 ```
 
-A full Latex appendix can be generated from any number of rchitex and ggplot object. The `appendize` function will save each table/plot in an organized tree structure and generate an *appendix.tex* file which presents each table/plot on a separate page all under an Appendix section label. 
+Futher aesthetical modifications are available. Users can adjust the level of precision by overriding the default value for `max_precision`. 
 
-```{r ex2, eval=FALSE}
-fp <- paste(getwd(), 'rchitEx', sep='/')
-appendize(b, d, dir=fp)
+The whole table can be inverted by setting `flip` to True.
+
+``` {r}
+rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
+         max_precision = 0, flip = TRUE)
 ```
+### Latex and HTML output
+Rchitex is likewise capable of producing the code necessary to output tables in LaTeX and HTML formats. By specifying a `path`, Rchitex will write a .tex file to the inputted path while also outputting the text table to the standard consule. The text output can be supressed by setting `silent` to TRUE.
 
-## Tutorial
+Rather than simultaneous output, rchitex can directly write LaTeX and HTML to the consule. This is particularly important if using a Markdown file (like this document). The `md` argument should either be set to 'latex' or 'html'. Note that you may need to set the chunk option `results` to 'asis'
 
-A full tutorial of all features and available customization is available in the Usage vignette that comes with the package.
+``` {r, results = 'asis'}
+rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
+         max_precision = 0, flip = TRUE, md = 'html')
+```

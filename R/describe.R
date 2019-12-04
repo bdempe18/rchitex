@@ -65,7 +65,8 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
   }
 
   col_stats <- function(data, fs) {
-    lapply(fs, function(f) round_n(f(data)))
+    lapply(fs, function(f)  {
+      round_n(f(data)) })
   }
 
   d$data <- lapply(colnames(data), function(column) {
