@@ -99,14 +99,14 @@ rchitex::describe(state_df, title = tbl_title, statistics = stat_funcs)
 #> =================================================
 #> Statistic    Average     St.D.       random value   
 #> -------------------------------------------------
-#> Population   4,246.42    4,464.491      5,313       
-#> Income        4,435.8     614.47        4,167       
-#> Illiteracy     1.17        0.61          1.9        
+#> Population   4,246.42    4,464.491       579        
+#> Income        4,435.8     614.47        4,254       
+#> Illiteracy     1.17        0.61          0.7        
 #> Life Exp      70.879       1.342        69.31       
-#> Murder         7.378       3.692         6.2        
-#> HS Grad       53.108       8.077         47.8       
-#> Frost         104.46      51.981          32        
-#> Area         70,735.88   85,327.3       39,780
+#> Murder         7.378       3.692         4.2        
+#> HS Grad       53.108       8.077         53.3       
+#> Frost         104.46      51.981          20        
+#> Area         70,735.88   85,327.3       55,748
 ```
 
 Futher aesthetical modifications are available. Users can adjust the
@@ -123,7 +123,7 @@ rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs,
 #> ------------------------------------------------------
 #> Average        4,436        1           71        7      
 #> St.D.           614         1           1         4      
-#> random value   4,566        1           72        11
+#> random value   4,628        1           70        6
 ```
 
 ### Latex and HTML output
@@ -263,7 +263,7 @@ random value
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-5,237
+4,561
 
 </td>
 
@@ -275,13 +275,13 @@ random value
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-69
+68
 
 </td>
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-4
+5
 
 </td>
 

@@ -88,6 +88,13 @@ Rchitex is likewise capable of producing the code necessary to output tables in 
 
 Rather than simultaneous output, rchitex can directly write LaTeX and HTML to the consule. This is particularly important if using a Markdown file (like this document). The `md` argument should either be set to 'latex' or 'html'. Note that you may need to set the chunk option `results` to 'asis'
 
+``` {r}
+rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
+         max_precision = 0, flip = TRUE, md = 'html')
+```
+
+
+
 ``` {r, results = 'asis'}
 rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
          max_precision = 0, flip = TRUE, md = 'html')
