@@ -1,9 +1,19 @@
 ---
 output: 
-  github_document:
-    toc: true
-    toc_depth: 2
+  github_document
 ---
+
+<!-- <style> -->
+
+<!-- table, th, td { -->
+<!-- border: 3 px solid green; -->
+<!-- } -->
+
+<!-- td { -->
+<!--   style="padding: 0em;" -->
+<!-- } -->
+
+</style>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -81,4 +91,12 @@ Rather than simultaneous output, rchitex can directly write LaTeX and HTML to th
 ``` {r, results = 'asis'}
 rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
          max_precision = 0, flip = TRUE, md = 'html')
+```
+
+``` {r, results = 'asis'}
+data(swiss)
+mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
+mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
+
+rchitex::build(mod1, mod2, md = 'html')
 ```

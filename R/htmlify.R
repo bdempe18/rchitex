@@ -1,39 +1,45 @@
-header <- function(text) {
-  paste0('<th>', text, '</th>\n', collapse='')
+tag_factory <- function(tag_type) {
+  force(tag_type)
+  function(text, padding = '10px 10px 0px 10px',
+                 border = '0px', text_align = 'center', colspan=0) {
+    padding <- paste('padding: ', padding, sep='')
+    border <- paste('border: ', border, sep='')
+    text_align <- paste('text_align: ', text_align, sep='')
+    col_span = ifelse(colspan == 0, '', paste('colspan: ', colspan, sep = ''))
+    style <- paste0(c(padding, border, text_align), collapse = '', sep = '; ')
+    if (colspan  > 0 ) style <- paste(style, col_span, sep = '')
+    style <- paste0('style="', style, '"', collapse = '', sep = '')
+    paste0('<', tag_type, ' ',  style, '> ', text, ' </', tag_type, '>\n',
+           collapse = '', sep ='')
+  }
 }
 
-row_el <- function(text, align=NA, border=NA, colspan=NA) {
-  style <- cols <- ''
-  if (!is.na(align)) style <- paste('style="text-align:', align, '"')
-  if (!is.na(border)) style <- 'style="border-bottom: 1px solid black"'
-  if (!is.na(colspan)) cols <- paste('colspan="', colspan, '"', sep='')
-  paste0('<td ',cols, style, '>', text, '</td>', collapse='', sep='')
+td <- tag_factory('td')
+th <- tag_factory('th')
+tr <- function(text, border = '1px solid #ccc') {
+  if (border != '1px solid #ccc') {
+    paste0('<tr style="border-top: ', border,
+           '"> ', text, ' </tr>\n\n', collapse = '', sep = '')
+  } else paste0('<tr> ', text, ' </tr>\n\n', collapse = '', sep = '')
 }
+## -------------------------------------------------------------
 
-row_start <- function(text) {
-  paste0('<tr>', text, '</tr>')
-}
-
-blank_row <- function() {
-  row_start(c(row_el('', 'left'), row_el('')))
-}
 
 to_html <- function(data, title='Summary statistics', header=TRUE) {
   citation <- ifelse(header,
-    '<-- Table generating using RCHITEX by Ben Dempe (2019) -->',
+    '<-- Table generating using RCHITEX by Ben Dempe (2019) -->\n',
     '')
-  hr <- row_start(paste('<td colspan="', ncol(data) + 1,
-                        '" style="border-bottom: 1px solid black"></td>', sep=''))
-  preamble <- paste('<table style = "text-align: center;" cellingpadding=100px>',
-                    '<caption>', title, '</caption>', hr,
-                    row_start('<td style="text-align:left"></td>'),
-                    row_start(row_el(c('',colnames(data)))), hr)
-  body <- unlist(lapply(rownames(data), function(r)
-    row_start(row_el(c(r, data[r, ])))))
-  body <- paste(body, sep='\n', collapse='')
+  preamble <- paste('<table style = "line-height: 1">',
+                    '<caption>', title, '</caption>\n', sep = '')
+  header <- tr(th(text = c('', colnames(data)), text_align = 'center'))
+  body <- unlist(lapply(rownames(data), function(r) {
+    tbl_row <- paste(td(r, text_align = 'left'),
+                 td(data[r, ], text_align = 'right'), sep = ' ')
+    tr(tbl_row)
+  }))
+  body <- paste0(body, sep = '', collapse = '')
   post <- '</table>'
-  paste(preamble, body, post, sep='', collapse='')
-
+  paste(preamble,  header, body, post, sep='\n', collapse='')
 }
 
 to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
@@ -44,20 +50,17 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   citation <- '<-- Table generating using RCHITEX by Ben Dempe (2019) -->'
   n_mods <- length(reg_data[[1]])
   col_width <- paste('<col width=175>\n', strrep('<col width=120em>\n', n_mods))
-  hr <- row_start(paste('<td colspan="', n_mods + 1,
-                        '" style="border-bottom: 1px solid black"></td>', sep=''))
 
   # grouped labels
   if (!is.null(grouped_label)) {
     h <- group_labels(grouped_label, n_mods, TRUE)
-    h <- row_start(paste0(row_el(''), paste0(h, collapse=''), collapse=''))
+    h <- tr(paste0(td(''), paste0(h, collapse=''), collapse=''))
   } else h <- ''
 
   preamble <- paste('<table style = "text-align: center;">',
-                 '<caption>', title, '</caption>', '\n', hr, '\n', h,
-  row_start('<td style="text-align:left"></td>'),
-  row_start(row_el(c('',col_names))),'\n',hr,'\n')
+                 '<caption>', title, '</caption>', h)
 
+  header <- tr(th(text = c('', col_names), text_align = 'center'), border = '0px solid #ccc')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -65,20 +68,21 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
                                                     '<sup>', sig[[r]], '</sup>'))
     errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
                                                    sep=''))
-    lab <- row_el(idn[[r]], 'left')
-    rel_c <- row_el(ests)
+    lab <- td(text = idn[[r]], text_align = 'left')
+    rel_c <- td(text = ests)
     rel_c <- paste0(lab, rel_c, collapse='')
-    rel_e <- row_el(c(' ', errs))
-    paste0(row_start(c(rel_c, rel_e)), blank_row())
+    rel_e <- td(text = c(' ', errs))
+    paste0(tr(c(rel_c, rel_e), border = '0px solid #ccc'),
+           tr(text = '', border = '0px solid #ccc'))
   }))
 
   body <- paste0(body, sep='\n', collapse='')
 
   # Post
   fit <- unlist(lapply(names(fit_char), function(fc) {
-    lab <- row_el(fc, 'left')
-    rw <- row_el(fit_char[[fc]])
-    row_start(paste0(lab, rw, collapse=''))
+    lab <- td(text = fc, text_align = 'left')
+    rw <- td(text = fit_char[[fc]])
+    tr(paste0(lab, rw, collapse=''), border = '0px solid #ccc')
   }))
   fit <- paste0(fit, sep='', collapse='\n')
 
@@ -88,9 +92,10 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
 
 
   ## TODO Finish
-  p_post <- paste0(row_start((row_el('', colspan=3))),
-                   row_start(paste0(row_el(paste0('<em>Note: </em>', note, collapse=''), 'left'),
-                                    row_el(p_post, 'right', colspan=n_mods), collapse='')), collapse='')
+  p_post <- paste0(tr((td('', colspan=3))),
+                   tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), 'left'),
+                                    td(p_post, 'right', colspan=n_mods), collapse=''),
+                      border = '0px solid #ccc'), collapse='')
   post <- '</table>'
-  c(preamble, body, hr, fit, hr, p_post, post)
+  c(preamble, header, body, fit, p_post, post)
 }
