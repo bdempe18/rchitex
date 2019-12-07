@@ -1,6 +1,6 @@
 tag_factory <- function(tag_type) {
   force(tag_type)
-  function(text, padding = '10px 10px 0px 10px',
+  function(text, padding = '5px 0px 0px 10px',
                  border = '0px', text_align = 'center', colspan=0) {
     padding <- paste('padding: ', padding, sep='')
     border <- paste('border: ', border, sep='')

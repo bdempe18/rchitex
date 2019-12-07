@@ -4,12 +4,27 @@
 \alias{build}
 \title{Formats Regression Tables to Text, LaTeX, and HTML}
 \usage{
-build(..., dep_names = NULL, indep_names = NULL, note = "",
-  title = "Model results", max_precision = 3, path = NULL,
-  rse = FALSE, silent = FALSE, landscape = FALSE, report = "p",
-  stats = "oraf", pre_stats = NULL, md = NULL, header = TRUE,
-  label = "table", sig = NULL, as_table = TRUE,
-  grouped_label = NULL)
+build(
+  ...,
+  dep_names = NULL,
+  indep_names = NULL,
+  note = "",
+  title = "Model results",
+  max_precision = 3,
+  path = NULL,
+  rse = FALSE,
+  silent = FALSE,
+  landscape = FALSE,
+  report = "p",
+  stats = "oraf",
+  pre_stats = NULL,
+  md = NULL,
+  header = TRUE,
+  label = "table",
+  sig = NULL,
+  as_table = TRUE,
+  grouped_label = NULL
+)
 }
 \arguments{
 \item{...}{Regression models to be included in Table.  Table will display models in the same order as provided.}

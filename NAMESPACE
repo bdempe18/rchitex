@@ -2,7 +2,11 @@
 
 S3method(build,default)
 S3method(describe,default)
+S3method(print,rse)
+S3method(rse,default)
+S3method(summary,rse)
 export(appendize)
 export(build)
 export(describe)
 export(gg_tex)
+export(rse)

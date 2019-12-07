@@ -99,14 +99,14 @@ rchitex::describe(state_df, title = tbl_title, statistics = stat_funcs)
 #> =================================================
 #> Statistic    Average     St.D.       random value   
 #> -------------------------------------------------
-#> Population   4,246.42    4,464.491       579        
-#> Income        4,435.8     614.47        4,254       
-#> Illiteracy     1.17        0.61          0.7        
-#> Life Exp      70.879       1.342        69.31       
-#> Murder         7.378       3.692         4.2        
-#> HS Grad       53.108       8.077         53.3       
-#> Frost         104.46      51.981          20        
-#> Area         70,735.88   85,327.3       55,748
+#> Population   4,246.42    4,464.491      1,544       
+#> Income        4,435.8     614.47        3,098       
+#> Illiteracy     1.17        0.61          0.8        
+#> Life Exp      70.879       1.342        71.87       
+#> Murder         7.378       3.692         1.7        
+#> HS Grad       53.108       8.077         63.9       
+#> Frost         104.46      51.981          11        
+#> Area         70,735.88   85,327.3       7,521
 ```
 
 Futher aesthetical modifications are available. Users can adjust the
@@ -123,7 +123,7 @@ rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs,
 #> ------------------------------------------------------
 #> Average        4,436        1           71        7      
 #> St.D.           614         1           1         4      
-#> random value   4,628        1           70        6
+#> random value   4,167        2           69        10
 ```
 
 ### Latex and HTML output
@@ -139,6 +139,44 @@ HTML to the consule. This is particularly important if using a Markdown
 file (like this document). The `md` argument should either be set to
 ‘latex’ or ‘html’. Note that you may need to set the chunk option
 `results` to ‘asis’
+
+``` r
+rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
+         max_precision = 0, flip = TRUE, md = 'html')
+#> <table style = "line-height: 1"><caption>State summary statistics</caption>
+#> 
+#> <tr> <th style="padding: 10px 10px 0px 10px; border: 0px; text_align: center; ">  </th>
+#> <th style="padding: 10px 10px 0px 10px; border: 0px; text_align: center; "> Income </th>
+#> <th style="padding: 10px 10px 0px 10px; border: 0px; text_align: center; "> Illiteracy </th>
+#> <th style="padding: 10px 10px 0px 10px; border: 0px; text_align: center; "> Life Exp </th>
+#> <th style="padding: 10px 10px 0px 10px; border: 0px; text_align: center; "> Murder </th>
+#>  </tr>
+#> 
+#> 
+#> <tr> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: left; "> Average </td>
+#>  <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 4,436 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 1 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 71 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 7 </td>
+#>  </tr>
+#> 
+#> <tr> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: left; "> St.D. </td>
+#>  <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 614 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 1 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 1 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 4 </td>
+#>  </tr>
+#> 
+#> <tr> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: left; "> random value </td>
+#>  <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 4,254 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 2 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 72 </td>
+#> <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; "> 6 </td>
+#>  </tr>
+#> 
+#> 
+#> </table>
+```
 
 ``` r
 rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
@@ -263,7 +301,7 @@ random value
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-4,561
+3,875
 
 </td>
 
@@ -275,13 +313,13 @@ random value
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-68
+70
 
 </td>
 
 <td style="padding: 10px 10px 0px 10px; border: 0px; text_align: right; ">
 
-5
+11
 
 </td>
 

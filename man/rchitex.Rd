@@ -3,7 +3,6 @@
 \docType{package}
 \name{rchitex}
 \alias{rchitex}
-\alias{rchitex-package}
 \title{rchitex: streaming the transition from R exploration to article writing}
 \description{
 The rchitex package is designed to facilitate the creation

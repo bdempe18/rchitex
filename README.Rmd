@@ -3,18 +3,6 @@ output:
   github_document
 ---
 
-<!-- <style> -->
-
-<!-- table, th, td { -->
-<!-- border: 3 px solid green; -->
-<!-- } -->
-
-<!-- td { -->
-<!--   style="padding: 0em;" -->
-<!-- } -->
-
-</style>
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
