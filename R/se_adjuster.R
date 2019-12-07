@@ -36,7 +36,6 @@ print.rse <- function(m) {
 
 #' @export
 summary.rse <- function(m) {
-  print('here!!')
   x <- summary(structure(m, class = m$model_type))
   x$coefficients <- m$se
   x
