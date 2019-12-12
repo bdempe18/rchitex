@@ -1,6 +1,6 @@
 tag_factory <- function(tag_type) {
   force(tag_type)
-  function(text, padding = '5px 0px 0px 10px',
+  function(text, padding = '0px 0px 0px 10px',
                  border = '1px', text_align = 'center', colspan=0) {
     padding <- paste('padding: ', padding, sep='')
     border <- paste('border: ', border, sep='')
@@ -63,7 +63,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   preamble <- paste('<table style = "text-align: center;">',
                  '<caption>', title, '</caption>', h)
 
-  header <- tr(th(text = c('', col_names), text_align = 'center'), border = '1px solid #ccc')
+  header <- tr(td(text = c('', col_names), text_align = 'center'), border = '1px solid #ccc')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -72,7 +72,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
                                                    sep=''))
     lab <- td(text = idn[[r]], text_align = 'left')
-    rel_c <- td(text = ests)
+    rel_c <- td(text = ests, padding = '0`px 0px ')
     rel_c <- paste0(lab, rel_c, collapse='')
     rel_e <- td(text = c(' ', errs))
     border <- switch(r == tail(names(idn), 1), '1px solid #ccc', NULL)
@@ -96,7 +96,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
 
   ## TODO Finish
   p_post <- paste0(tr((td('', colspan=3))),
-                   tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), 'left'),
+                   tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), text_align = 'left'),
                                     td(p_post, 'right', colspan=n_mods), collapse=''),
                       border = '1px solid #ccc'), collapse='')
   post <- '</table>'
