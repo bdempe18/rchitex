@@ -12,7 +12,6 @@ build(
   title = "Model results",
   max_precision = 3,
   path = NULL,
-  rse = FALSE,
   silent = FALSE,
   landscape = FALSE,
   report = "p",
@@ -41,8 +40,6 @@ that the models will be displayed (from left to right). If NULL, the columns wil
 \item{max_precision}{Maximum number of digits in a table cell.}
 
 \item{path}{Output path for the tex file. NA for no tex output.}
-
-\item{rse}{Transforms to robust standard errors if true. Uses HC1 like STATA.}
 
 \item{silent}{No text output if true.}
 

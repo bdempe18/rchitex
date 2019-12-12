@@ -2,7 +2,7 @@
 % Please edit documentation in R/se_adjuster.R
 \name{rse}
 \alias{rse}
-\title{Simply adjustment of model standard errors}
+\title{Simple adjustment of model standard errors}
 \usage{
 rse(mod)
 }

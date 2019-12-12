@@ -60,7 +60,7 @@ get_wald <- function(mod, sig, roundr) {
 
 }
 
-get_fits <- function(mods, stats='all', roundr, sig, pre_stats=NA) {
+get_fits <- function(mods, stats='all', roundr, sig, annotations=NA) {
   # <-- function returns a list of fit values
   # in the form of a list -->
 
@@ -68,7 +68,8 @@ get_fits <- function(mods, stats='all', roundr, sig, pre_stats=NA) {
                   'glm'   = 'olc',
                   'plm'   = 'oraf',
                   'ivreg' = 'oras',
-                  'tobit' = 'olw')
+                  'tobit' = 'olw',
+                  'rse'   = 'oraf')
 
   # mods may need to be coerced to list
   # TODO: DEAL WITH ROBUST STANDARD ERRORS
@@ -114,8 +115,8 @@ get_fits <- function(mods, stats='all', roundr, sig, pre_stats=NA) {
 
   names(fit_char) <- names(possibles[unlist(includes)])
 
-  if (!is.null(pre_stats))
-    fit_char <- c(pre_stats, fit_char)
+  if (!is.null(annotations))
+    fit_char <- c(annotations, fit_char)
 
   fit_char <- lapply(fit_char, function(fc) {
     if (all(is.na(fc))) NULL

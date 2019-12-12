@@ -1,14 +1,15 @@
 tag_factory <- function(tag_type) {
   force(tag_type)
   function(text, padding = '5px 0px 0px 10px',
-                 border = '0px', text_align = 'center', colspan=0) {
+                 border = '1px', text_align = 'center', colspan=0) {
     padding <- paste('padding: ', padding, sep='')
     border <- paste('border: ', border, sep='')
-    text_align <- paste('text_align: ', text_align, sep='')
+    text_align <- paste('text-align: ', text_align, sep='')
     col_span = ifelse(colspan == 0, '', paste('colspan: ', colspan, sep = ''))
     style <- paste0(c(padding, border, text_align), collapse = '', sep = '; ')
-    if (colspan  > 0 ) style <- paste(style, col_span, sep = '')
     style <- paste0('style="', style, '"', collapse = '', sep = '')
+    if (colspan  > 0 ) style <- paste(style, 'colspan="', col_span, ,'"',sep = '')
+
     paste0('<', tag_type, ' ',  style, '> ', text, ' </', tag_type, '>\n',
            collapse = '', sep ='')
   }
@@ -16,20 +17,21 @@ tag_factory <- function(tag_type) {
 
 td <- tag_factory('td')
 th <- tag_factory('th')
-tr <- function(text, border = '1px solid #ccc') {
-  if (border != '1px solid #ccc') {
-    paste0('<tr style="border-top: ', border,
+tr <- function(text, border = NULL) {
+  if (!is.null(border)) {
+    paste0('<tr style="border-bottom: ', border,
            '"> ', text, ' </tr>\n\n', collapse = '', sep = '')
-  } else paste0('<tr> ', text, ' </tr>\n\n', collapse = '', sep = '')
+  }
+  else paste0('<tr> ', text, ' </tr>\n\n', collapse = '', sep = '')
 }
-## -------------------------------------------------------------
 
+## ----------------------------------------------------------------------------
 
 to_html <- function(data, title='Summary statistics', header=TRUE) {
   citation <- ifelse(header,
     '<-- Table generating using RCHITEX by Ben Dempe (2019) -->\n',
     '')
-  preamble <- paste('<table style = "line-height: 1">',
+  preamble <- paste('<table style = "line-height: 1.6">',
                     '<caption>', title, '</caption>\n', sep = '')
   header <- tr(th(text = c('', colnames(data)), text_align = 'center'))
   body <- unlist(lapply(rownames(data), function(r) {
@@ -41,6 +43,8 @@ to_html <- function(data, title='Summary statistics', header=TRUE) {
   post <- '</table>'
   paste(preamble,  header, body, post, sep='\n', collapse='')
 }
+
+## ----------------------------------------------------------------------------
 
 to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
                       path = NA, note='', title='', idn = NULL, sig_levels,
@@ -60,7 +64,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   preamble <- paste('<table style = "text-align: center;">',
                  '<caption>', title, '</caption>', h)
 
-  header <- tr(th(text = c('', col_names), text_align = 'center'), border = '0px solid #ccc')
+  header <- tr(th(text = c('', col_names), text_align = 'center'), border = '1px solid #ccc')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -72,8 +76,8 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     rel_c <- td(text = ests)
     rel_c <- paste0(lab, rel_c, collapse='')
     rel_e <- td(text = c(' ', errs))
-    paste0(tr(c(rel_c, rel_e), border = '0px solid #ccc'),
-           tr(text = '', border = '0px solid #ccc'))
+    border <- switch(r == tail(names(idn), 1), '1px solid #ccc', NULL)
+    paste0(tr(rel_c), tr(rel_e, border=border), sep = '\n', collapse='')
   }))
 
   body <- paste0(body, sep='\n', collapse='')
@@ -95,7 +99,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   p_post <- paste0(tr((td('', colspan=3))),
                    tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), 'left'),
                                     td(p_post, 'right', colspan=n_mods), collapse=''),
-                      border = '0px solid #ccc'), collapse='')
+                      border = '1px solid #ccc'), collapse='')
   post <- '</table>'
   c(preamble, header, body, fit, p_post, post)
 }

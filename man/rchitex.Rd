@@ -29,3 +29,10 @@ package optimal for use in Markdown files.
 }
 }
 
+\section{acknowledgements}{
+
+
+ Thank to everyone who helped advise, test, criticize, and support the creation of
+ this package, especially Erin Partin and Glen Kwende.
+}
+

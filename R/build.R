@@ -14,16 +14,15 @@
 #' @param report Test statistic to be provided along with the coefficient.
 #'   Must be either "p", "t", or "ste". Default value is "p".
 #' @param path Output path for the tex file. NA for no tex output.
-#' @param rse Transforms to robust standard errors if true. Uses HC1 like STATA.
 #' @param silent No text output if true.
 #' @param landscape If true, the Latex table will be landscaped.
 #' @param stats Fit characteristics to be provided at bottom of table. Must be a string of reporters.
 #'   Options include "o" for number of observations, "r" for R2, "a" for adjusted R2 and "f" for f-statistic.
 #'   The inputted string determines the order of outputted reporters. See vignette for full list of
 #'   possible values. Ex \code{stats='oraf'}.
-#' @param pre_stats List of optional reporters to be provided above normal fit characteristics.
+#' @param annotations List of optional reporters to be provided above normal fit characteristics.
 #'   The list must be formatted as the name of the reporter followed by a a vector of values.
-#'   Ex \code{pre_stats=list('R.St.E' = c('True', 'True'))}.
+#'   Ex \code{annotations=list('R.St.E' = c('True', 'True'))}.
 #' @param md Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
 #'   The Markdown chunk must be set to \code{results = "asis"}.
 #' @param header Includes RCHITEX header as a Latex comment if true.
@@ -51,29 +50,30 @@
 #'                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
 #' dep_names <- c('Fert.', 'Fert.', 'Fert.')
 #' grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
-#' pre_stats <- list('Full dataset' = c('No', 'Yes', 'Yes'))
+#' annotations <- list('Full dataset' = c('No', 'Yes', 'Yes'))
 #' sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
 #'
 #' build(mod1, mod2, lmod, indep_names=indep_names, dep_names=dep_names,
-#' grouped_label=grouped_label, pre_stats=pre_stats, sig=sig,
+#' grouped_label=grouped_label, annotations=annotations, sig=sig,
 #' title='Example regression from Swiss dataset', report='t',
 #' stats='orc')
 #'
 #' @export
 build <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
-         max_precision = 3, path = NULL, rse = FALSE,
-         silent = FALSE, landscape = FALSE, report = 'p', stats='oraf', pre_stats=NULL,
-         md = NULL, header = TRUE, label='table', sig = NULL, as_table=TRUE, grouped_label=NULL) {
+         max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE, report = 'p',
+         stats='oraf', annotations=NULL, md = NULL, header = TRUE, label='table', sig = NULL,
+         as_table=TRUE, grouped_label=NULL) {
   UseMethod("build")
 }
 
 #' @export
 build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
-                          max_precision = 3, path = NULL, rse = FALSE,
-                          silent = FALSE, landscape = FALSE, report = 'p', stats='all', pre_stats=NULL,
+                          max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE,
+                          report = 'p', stats='all', annotations=NULL,
                           md = NULL, header = TRUE, label='table', sig = NULL,
                           as_table=TRUE, grouped_label = NULL) {
   ## Add validations
+  # TODO, ensure that every element of ... is valid
   validate(md=md, max_precision=max_precision)
   mods <- list(...)
   idn <- format_indep_names(mods, indep_names)
@@ -116,12 +116,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   extract_reporter <- function(var_name, r) {
     lapply(mods, function(m) {
       tryCatch({
-        if (rse) {
-          se <- lmtest::coeftest(m, vcov = sandwich::vcovHC(m, "HC1"))
-          round_n(se[var_name, fit_stats[[r]]])
-        } else {
-          round_n(summary(m)$coefficients[var_name, fit_stats[[r]]])
-        }
+        round_n(summary(m)$coefficients[var_name, fit_stats[[r]]])
       }, error = function(e) NA)
     })
   }
@@ -138,7 +133,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
 
   if (!is.null(md)) md <- tolower(md)
   b$i_names <- idn
-  b$fits <- get_fits(mods, stats=stats, pre_stats=pre_stats, roundr=round_n,
+  b$fits <- get_fits(mods, stats=stats, annotations=annotations, roundr=round_n,
                      sig=sig)
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})

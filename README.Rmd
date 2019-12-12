@@ -95,3 +95,10 @@ mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + 
 
 rchitex::build(mod1, mod2, md = 'html')
 ```
+### Standard errors
+
+Standard errors can be specified in a number of ways. In most cases, you may need to apply robust standard errors. The `rse` class converts a model's standard errors to robust standard errors similar to STATA's robust option (HC1). 
+
+```{r robust}
+
+```

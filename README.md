@@ -83,14 +83,14 @@ rchitex::describe(state_df, title = tbl_title, statistics = stat_funcs)
 #> =================================================
 #> Statistic    Average     St.D.       random value   
 #> -------------------------------------------------
-#> Population   4,246.42    4,464.491      5,441       
-#> Income        4,435.8     614.47        4,701       
-#> Illiteracy     1.17        0.61          0.6        
-#> Life Exp      70.879       1.342        72.96       
-#> Murder         7.378       3.692         10.7       
-#> HS Grad       53.108       8.077         57.1       
-#> Frost         104.46      51.981         168        
-#> Area         70,735.88   85,327.3       54,464
+#> Population   4,246.42    4,464.491      11,197      
+#> Income        4,435.8     614.47        4,091       
+#> Illiteracy     1.17        0.61          0.9        
+#> Life Exp      70.879       1.342        70.29       
+#> Murder         7.378       3.692         11.1       
+#> HS Grad       53.108       8.077         50.2       
+#> Frost         104.46      51.981         161        
+#> Area         70,735.88   85,327.3      566,432
 ```
 
 Futher aesthetical modifications are available. Users can adjust the
@@ -107,7 +107,7 @@ rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs,
 #> ------------------------------------------------------
 #> Average        4,436        1           71        7      
 #> St.D.           614         1           1         4      
-#> random value   5,348        0           70        6
+#> random value   4,809        0           72        5
 ```
 
 ### Latex and HTML output
@@ -127,35 +127,35 @@ file (like this document). The `md` argument should either be set to
 ``` r
 rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
          max_precision = 0, flip = TRUE, md = 'html')
-#> <table style = "line-height: 1"><caption>State summary statistics</caption>
+#> <table style = "line-height: 1.6"><caption>State summary statistics</caption>
 #> 
-#> <tr> <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">  </th>
-#> <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; "> Income </th>
-#> <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; "> Illiteracy </th>
-#> <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; "> Life Exp </th>
-#> <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; "> Murder </th>
+#> <tr> <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">  </th>
+#> <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; "> Income </th>
+#> <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; "> Illiteracy </th>
+#> <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; "> Life Exp </th>
+#> <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; "> Murder </th>
 #>  </tr>
 #> 
 #> 
-#> <tr> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; "> Average </td>
-#>  <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 4,436 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 1 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 71 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 7 </td>
+#> <tr> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; "> Average </td>
+#>  <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 4,436 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 1 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 71 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 7 </td>
 #>  </tr>
 #> 
-#> <tr> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; "> St.D. </td>
-#>  <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 614 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 1 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 1 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 4 </td>
+#> <tr> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; "> St.D. </td>
+#>  <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 614 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 1 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 1 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 4 </td>
 #>  </tr>
 #> 
-#> <tr> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; "> random value </td>
-#>  <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 4,468 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 2 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 71 </td>
-#> <td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; "> 3 </td>
+#> <tr> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; "> random value </td>
+#>  <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 4,675 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 2 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 71 </td>
+#> <td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; "> 9 </td>
 #>  </tr>
 #> 
 #> 
@@ -167,7 +167,7 @@ rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs,
          max_precision = 0, flip = TRUE, md = 'html')
 ```
 
-<table style="line-height: 1">
+<table style="line-height: 1.6">
 
 <caption>
 
@@ -177,29 +177,29 @@ State summary statistics
 
 <tr>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </th>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 Income
 
 </th>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 Illiteracy
 
 </th>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 Life Exp
 
 </th>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 Murder
 
@@ -209,31 +209,31 @@ Murder
 
 <tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Average
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 4,436
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 1
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 71
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 7
 
@@ -243,31 +243,31 @@ Average
 
 <tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 St.D.
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 614
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 1
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 1
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 4
 
@@ -277,33 +277,33 @@ St.D.
 
 <tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 random value
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
-3,712
-
-</td>
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
-
-0
+4,167
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
+
+2
+
+</td>
+
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
 71
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: right; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: right; ">
 
-8
+11
 
 </td>
 
@@ -329,19 +329,19 @@ Model results
 
 </caption>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 1px solid #ccc">
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </th>
 
-<th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 1)  
     
     </th>
     
-    <th style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+    <th style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
     
     2)  
         
@@ -349,21 +349,21 @@ Model results
         
         </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Agriculture
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 \-0.066<sup></sup>
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 \-0.172<sup>\*\*</sup>
 
@@ -371,19 +371,19 @@ Agriculture
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.411)
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.019)
 
@@ -391,25 +391,21 @@ Agriculture
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Education
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 \-0.963<sup>\*\*\*</sup>
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 \-0.871<sup>\*\*\*</sup>
 
@@ -417,19 +413,19 @@ Education
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.0)
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.0)
 
@@ -437,23 +433,19 @@ Education
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Infant.Mortality
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 1.077<sup>\*\*\*</sup>
 
@@ -461,17 +453,17 @@ Infant.Mortality
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
-
-</td>
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
+
+</td>
+
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.007)
 
@@ -479,23 +471,19 @@ Infant.Mortality
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Catholic
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 0.104<sup>\*\*\*</sup>
 
@@ -503,17 +491,17 @@ Catholic
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
-
-</td>
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
+
+</td>
+
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.005)
 
@@ -521,23 +509,19 @@ Catholic
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Examination
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 \-0.258<sup></sup>
 
@@ -545,17 +529,17 @@ Examination
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
-
-</td>
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
+
+</td>
+
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.315)
 
@@ -563,25 +547,21 @@ Examination
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr>
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 (Intercept)
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 84.08<sup>\*\*\*</sup>
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 66.915<sup>\*\*\*</sup>
 
@@ -589,19 +569,19 @@ Examination
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 1px solid #ccc">
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.0)
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 (0.0)
 
@@ -609,25 +589,21 @@ Examination
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 0px solid #ccc">
 
-</tr>
-
-<tr style="border-top: 0px solid #ccc">
-
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Observations
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 47
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 47
 
@@ -635,21 +611,21 @@ Observations
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 0px solid #ccc">
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 R2
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 0.449
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 0.707
 
@@ -657,21 +633,21 @@ R2
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 0px solid #ccc">
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 Adjusted R2
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 0.424
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 0.671
 
@@ -679,21 +655,21 @@ Adjusted R2
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 0px solid #ccc">
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: left; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: left; ">
 
 F Statistic
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 17.945
 
 </td>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; ">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; ">
 
 19.761
 
@@ -703,21 +679,21 @@ F Statistic
 
 <tr>
 
-<td style="padding: 5px 0px 0px 10px; border: 0px; text_align: center; colspan: 3">
+<td style="padding: 5px 0px 0px 10px; border: 1px; text-align: center; " colspan="colspan: 3">
 
 </td>
 
 </tr>
 
-<tr style="border-top: 0px solid #ccc">
+<tr style="border-bottom: 1px solid #ccc">
 
-<td style="padding: left; border: 0px; text_align: center; ">
+<td style="padding: left; border: 1px; text-align: center; ">
 
 <em>Note: </em>
 
 </td>
 
-<td style="padding: right; border: 0px; text_align: center; colspan: 2">
+<td style="padding: right; border: 1px; text-align: center; " colspan="colspan: 2">
 
 <sup>***</sup>p\<0.01 <sup>**</sup>p\<0.05 <sup>*</sup>p\<0.1
 
@@ -726,3 +702,10 @@ F Statistic
 </tr>
 
 </table>
+
+### Standard errors
+
+Standard errors can be specified in a number of ways. In most cases, you
+may need to apply robust standard errors. The `rse` class converts a
+model’s standard errors to robust standard errors similar to STATA’s
+robust option (HC1).
