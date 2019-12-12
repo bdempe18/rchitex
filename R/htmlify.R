@@ -5,7 +5,6 @@ tag_factory <- function(tag_type) {
     padding <- paste('padding: ', padding, sep='')
     border <- paste('border: ', border, sep='')
     text_align <- paste('text-align: ', text_align, sep='')
-    col_span = ifelse(colspan == 0, '', paste('colspan: ', colspan, sep = ''))
     style <- paste0(c(padding, border, text_align), collapse = '', sep = '; ')
     style <- paste0('style="', style, '"', collapse = '', sep = '')
     if (colspan  > 0 ) style <- paste(style, 'colspan="', col_span, '"', sep = '')
