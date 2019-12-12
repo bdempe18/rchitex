@@ -8,7 +8,7 @@ tag_factory <- function(tag_type) {
     col_span = ifelse(colspan == 0, '', paste('colspan: ', colspan, sep = ''))
     style <- paste0(c(padding, border, text_align), collapse = '', sep = '; ')
     style <- paste0('style="', style, '"', collapse = '', sep = '')
-    if (colspan  > 0 ) style <- paste(style, 'colspan="', col_span, ,'"',sep = '')
+    if (colspan  > 0 ) style <- paste(style, 'colspan="', col_span, '"', sep = '')
 
     paste0('<', tag_type, ' ',  style, '> ', text, ' </', tag_type, '>\n',
            collapse = '', sep ='')
