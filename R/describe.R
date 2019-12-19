@@ -44,6 +44,7 @@ describe <- function(data, note='', silent = F, path = NA, max_precision = 6,
 describe.default <- function(data, note='', silent = F, path = NULL, max_precision = 3,
                      statistics = list('N' = length,
                                        'Mean' = mean,
+                                       'Median' = median,
                                        'St. Dev' = stats::sd,
                                        'Min' = min,
                                        'Max' = max),
@@ -90,6 +91,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
   d$options$landscape <- landscape
   d$options$type <- ifelse(is.null(md), "latex", md)
   d$text <- data2text(d$data, title=title)
+  # this is a cluster fuck of an if statement
   if (is.null(md) || tolower(md) == 'latex' || tolower(md) == 'tex') {
     d$code <- summary2tex(stats_mat = d$data, note=note)
     if (landscape) d$code <- lan_wrap(table_wrap(d$code))
@@ -101,8 +103,8 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
 
   # dealing with landscaping and tables
   code <- d$code
-  if (landscape) code <- lan_wrap(table_wrap(d$code))
-  else if (as_table) code <- table_wrap(d$code)
+  #if (landscape) code <- lan_wrap(table_wrap(d$code))
+  #else if (as_table) code <- table_wrap(d$code)
 
   if (!silent) {
     if (is.null(md)) writeLines(d$text, con=stdout())

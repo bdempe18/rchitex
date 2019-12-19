@@ -9,16 +9,17 @@ tag_factory <- function(tag_type) {
     style <- paste0('style="', style, '"', collapse = '', sep = '')
     if (colspan  > 0 ) style <- paste(style, 'colspan="', colspan, '"', sep = '')
 
-    paste0('<', tag_type, ' ',  style, '> ', text, ' </', tag_type, '>\n',
+    paste0('<', tag_type, ' ',  style, '>', text, '</', tag_type, '>\n',
            collapse = '', sep ='')
   }
 }
 
 td <- tag_factory('td')
 th <- tag_factory('th')
-tr <- function(text, border = NULL) {
+tr <- function(text, border = NULL, border_top = NA) {
+  bt <- ifelse(is.na(border_top), '', paste0('; border-top:', border_top))
   if (!is.null(border)) {
-    paste0('<tr style="border-bottom: ', border,
+    paste0('<tr style="border-bottom: ', border, bt,
            '"> ', text, ' </tr>\n\n', collapse = '', sep = '')
   }
   else paste0('<tr> ', text, ' </tr>\n\n', collapse = '', sep = '')
@@ -61,9 +62,10 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
   } else h <- ''
 
   preamble <- paste('<table style = "text-align: center;">',
-                 '<caption>', title, '</caption>', h)
+                 '<caption><em>', title, '</em></caption>', h)
 
-  header <- tr(td(text = c('', col_names), text_align = 'center'), border = '1px solid #ccc')
+  header <- tr(td(text = c('', col_names), text_align = 'center',
+                  padding = '0px 15px 0px 15px'), border = '1px solid #ccc')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -71,10 +73,10 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
                                                     '<sup>', sig[[r]], '</sup>'))
     errs <- ifelse(is.na(reg_data[[r]]), '', paste('(', reporter[[r]], ')',
                                                    sep=''))
-    lab <- td(text = idn[[r]], text_align = 'left')
-    rel_c <- td(text = ests, padding = '0`px 0px ')
+    lab <- td(text = idn[[r]], text_align = 'left', padding = '0px 25px 0px 0px')
+    rel_c <- td(text = ests, padding = '0px 15px 0px 0px ')
     rel_c <- paste0(lab, rel_c, collapse='')
-    rel_e <- td(text = c(' ', errs))
+    rel_e <- td(text = c(' ', errs), padding = '0px 15px 15px 0px')
     border <- switch(r == tail(names(idn), 1), '1px solid #ccc', NULL)
     paste0(tr(rel_c), tr(rel_e, border=border), sep = '\n', collapse='')
   }))
@@ -95,10 +97,9 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
 
 
   ## TODO Finish
-  p_post <- paste0(tr((td('', colspan=3))),
+  p_post <- paste0(tr((td('', colspan=3)), border = '1px solid #ccc'),
                    tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), text_align = 'left'),
-                                    td(p_post, 'right', colspan=n_mods), collapse=''),
-                      border = '1px solid #ccc'), collapse='')
+                                    td(p_post, 'right', colspan=n_mods), collapse='')), collapse='')
   post <- '</table>'
   c(preamble, header, body, fit, p_post, post)
 }
