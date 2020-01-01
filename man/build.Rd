@@ -15,8 +15,8 @@ build(
   silent = FALSE,
   landscape = FALSE,
   report = "p",
-  stats = "oraf",
-  pre_stats = NULL,
+  annotations = "oraf",
+  custom_annotations = NULL,
   md = NULL,
   header = TRUE,
   label = "table",
@@ -48,14 +48,14 @@ that the models will be displayed (from left to right). If NULL, the columns wil
 \item{report}{Test statistic to be provided along with the coefficient.
 Must be either "p", "t", or "ste". Default value is "p".}
 
-\item{stats}{Fit characteristics to be provided at bottom of table. Must be a string of reporters.
+\item{annotations}{Fit characteristics to be provided at bottom of table. Must be a string of reporters.
 Options include "o" for number of observations, "r" for R2, "a" for adjusted R2 and "f" for f-statistic.
 The inputted string determines the order of outputted reporters. See vignette for full list of
-possible values. Ex \code{stats='oraf'}.}
+possible values. Ex \code{annotations='oraf'}.}
 
-\item{pre_stats}{List of optional reporters to be provided above normal fit characteristics.
+\item{custom_annotations}{List of optional reporters to be provided above normal fit characteristics.
 The list must be formatted as the name of the reporter followed by a a vector of values.
-Ex \code{pre_stats=list('R.St.E' = c('True', 'True'))}.}
+Ex \code{custom_annotations=list('R.St.E' = c('True', 'True'))}.}
 
 \item{md}{Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
 The Markdown chunk must be set to \code{results = "asis"}.}
@@ -65,7 +65,7 @@ The Markdown chunk must be set to \code{results = "asis"}.}
 \item{label}{Latex label.}
 
 \item{sig}{List containing the associations between significance symbols and cut-off p values.
-List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).}
+(ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).}
 
 \item{as_table}{True values wrap the underlying Latex Tabular object in a table.}
 
@@ -95,12 +95,12 @@ indep_names <- list('Agriculture' = "Agriculture share", 'Education' = 'Total ed
                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
 dep_names <- c('Fert.', 'Fert.', 'Fert.')
 grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
-pre_stats <- list('Full dataset' = c('No', 'Yes', 'Yes'))
+custom_annotations <- list('Full dataset' = c('No', 'Yes', 'Yes'))
 sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
 
 build(mod1, mod2, lmod, indep_names=indep_names, dep_names=dep_names,
-grouped_label=grouped_label, pre_stats=pre_stats, sig=sig,
+grouped_label=grouped_label, custom_annotations=custom_annotations, sig=sig,
 title='Example regression from Swiss dataset', report='t',
-stats='orc')
+annotations='orc')
 
 }

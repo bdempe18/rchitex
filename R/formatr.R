@@ -9,13 +9,15 @@ sig_at <- function(v, sigs) {
 }
 
 format_indep_names <- function(mods, indep_names=NA) {
-  if (class(indep_names) == 'list')  return (indep_names)
+  if (is.vector(indep_names))  return (indep_names)
 
   idn <- unique(unlist(lapply(mods, function(m) names(stats::coef(m)))))
   if ('(Intercept)' %in% idn) idn <- c(setdiff(idn, '(Intercept)'), '(Intercept)')
 
   idn <- as.list(idn)
   names(idn) <- idn
+  if ('(Intercept)' %in% idn)
+    idn['(Intercept)'] <- 'Constant'
   idn
 }
 
@@ -60,9 +62,12 @@ get_wald <- function(mod, sig, roundr) {
 
 }
 
-get_fits <- function(mods, stats='all', roundr, sig, annotations=NA) {
+get_fits <- function(mods, stats='all', roundr, sig, custom_annotations=NA) {
   # <-- function returns a list of fit values
   # in the form of a list -->
+
+  if (!is.character(stats))
+    stop('Annotions should be a single string', .call=FALSE)
 
   fit_lst <- list('lm'    = 'oraf',
                   'glm'   = 'olc',
@@ -72,7 +77,6 @@ get_fits <- function(mods, stats='all', roundr, sig, annotations=NA) {
                   'rse'   = 'oraf')
 
   # mods may need to be coerced to list
-  # TODO: DEAL WITH ROBUST STANDARD ERRORS
   if (class(mods) != "list") mods <- list(mods)
 
 
@@ -115,8 +119,8 @@ get_fits <- function(mods, stats='all', roundr, sig, annotations=NA) {
 
   names(fit_char) <- names(possibles[unlist(includes)])
 
-  if (!is.null(annotations))
-    fit_char <- c(annotations, fit_char)
+  if (!is.null(custom_annotations))
+    fit_char <- c(custom_annotations, fit_char)
 
   fit_char <- lapply(fit_char, function(fc) {
     if (all(is.na(fc))) NULL
@@ -158,7 +162,7 @@ group_labels <- function(grouped_label, n_mods, html=FALSE, missing='') {
     if (html) {
       h[grouped_label[[i]][[1]] - span] <- paste0('<td colspan=',
                                                   col_len,
-                                                  ' style="border-bottom: 1px solid black">',
+                                                  ' style="border-bottom: 1px #ccc; border-top: 0">',
                                                   i, ' </td>\n', sep='', collapse='')
     } else {
       h[grouped_label[[i]][[1]] - span] <- col_len

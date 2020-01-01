@@ -57,7 +57,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
                       text    = NA,
                       options = list(caption=title, label=label,
                                      table = as_table, landscape=landscape)),
-                 class=c("rchitex", "rtsummary"))
+                 class='rcTable')
   round_n <- roundr_fac(max_precision=max_precision, min_digs=0)
 
   # handles statistics as a vector
@@ -76,7 +76,6 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
 
   d$data <- t(matrix(unlist(d$data), ncol=length(data)))
   rownames(d$data) <- colnames(data)
-  #if (ncol(d$data) != length(names(statistics)))  stop('Descriptive functions must be vectorized')
   colnames(d$data) <- names(statistics)
 
   # flips table if necessary
@@ -89,7 +88,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
 
   d$options$table <- as_table
   d$options$landscape <- landscape
-  d$options$type <- ifelse(is.null(md), "latex", md)
+  d$options$type <- md
   d$text <- data2text(d$data, title=title)
   # this is a cluster fuck of an if statement
   if (is.null(md) || tolower(md) == 'latex' || tolower(md) == 'tex') {
@@ -126,4 +125,13 @@ validate <- function(md, max_precision) {
   }
 
   if (max_precision < 0) stop('Max precision must be greater than 0.', call. = FALSE)
+}
+
+#' print statement for build
+#' @export
+print.rcTable <- function(m){
+  if (is.null(m$options$type))
+    writeLines(m$text, con=stdout())
+  else
+    writeLines(m$code, con=stdout())
 }

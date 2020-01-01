@@ -31,7 +31,7 @@ to_html <- function(data, title='Summary statistics', header=TRUE) {
   citation <- ifelse(header,
     '<-- Table generating using RCHITEX by Ben Dempe (2019) -->\n',
     '')
-  preamble <- paste('<table style = "line-height: 1.6">',
+  preamble <- paste('<table style = "line-height: 1.6; border-bottom: 0">',
                     '<caption>', title, '</caption>\n', sep = '')
   header <- tr(th(text = c('', colnames(data)), text_align = 'center'))
   body <- unlist(lapply(rownames(data), function(r) {
@@ -61,11 +61,11 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     h <- tr(paste0(td(''), paste0(h, collapse=''), collapse=''))
   } else h <- ''
 
-  preamble <- paste('<table style = "text-align: center;">',
+  preamble <- paste('<table style = "text-align: center; border-bottom: 0; border-top: 1px solid #ccc">',
                  '<caption><em>', title, '</em></caption>', h)
 
   header <- tr(td(text = c('', col_names), text_align = 'center',
-                  padding = '0px 15px 0px 15px'), border = '1px solid #ccc')
+                  padding = '5px 15px 5px 15px'), border = '1px solid #ccc')
 
   # Body
   body <- unlist(lapply(names(idn), function(r) {
@@ -76,7 +76,7 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
     lab <- td(text = idn[[r]], text_align = 'left', padding = '0px 25px 0px 0px')
     rel_c <- td(text = ests, padding = '0px 15px 0px 0px ')
     rel_c <- paste0(lab, rel_c, collapse='')
-    rel_e <- td(text = c(' ', errs), padding = '0px 15px 15px 0px')
+    rel_e <- td(text = c(' ', errs), padding = '0px 15px 5px 0px')
     border <- switch(r == tail(names(idn), 1), '1px solid #ccc', NULL)
     paste0(tr(rel_c), tr(rel_e, border=border), sep = '\n', collapse='')
   }))
@@ -85,21 +85,24 @@ to_html_m <- function(reg_data, max_precision, fit_char, reporter, sig = list(),
 
   # Post
   fit <- unlist(lapply(names(fit_char), function(fc) {
-    lab <- td(text = fc, text_align = 'left')
-    rw <- td(text = fit_char[[fc]])
+    lab <- td(text = fc, text_align = 'left', padding = '0px 25px 0px 0px')
+    rw <- td(text = fit_char[[fc]], padding = '0px 15px 0px 0px')
     tr(paste0(lab, rw, collapse=''), border = '0px solid #ccc')
   }))
   fit <- paste0(fit, sep='', collapse='\n')
 
   p_post <- paste0(lapply(names(sig_levels), function(s) {
-    paste0('<sup>', s, '</sup>p&lt;', sig_levels[[s]], ' ', collapse='')
+    paste0('<sup>', s, ' </sup>p&lt;', sig_levels[[s]], ' ', collapse='')
   }), collapse='')
 
 
   ## TODO Finish
   p_post <- paste0(tr((td('', colspan=3)), border = '1px solid #ccc'),
-                   tr(paste0(td(paste0('<em>Note: </em>', note, collapse=''), text_align = 'left'),
-                                    td(p_post, 'right', colspan=n_mods), collapse='')), collapse='')
+                   tr(paste0(td(paste0('Note:', note, collapse=''),
+                                text_align = 'left',
+                                padding = '0px 25px 0px 0px'),
+                                    td(p_post, text_align = 'right', colspan=n_mods),
+                             collapse='')), collapse='')
   post <- '</table>'
   c(preamble, header, body, fit, p_post, post)
 }

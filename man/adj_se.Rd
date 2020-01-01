@@ -4,12 +4,13 @@
 \alias{adj_se}
 \title{Simple adjustment of model standard errors}
 \usage{
-adj_se(mod, f)
+adj_se(mod, transformation)
 }
 \arguments{
 \item{mod}{A (linear) model.}
 
-\item{f}{A function that transforms the model's standard errors.}
+\item{f}{Either a function to be transform a vector of standard errors
+or a vector of new standard errors to replace the model standard errors}
 }
 \value{
 a modified version of the inputted model

@@ -16,19 +16,19 @@
 #' @param path Output path for the tex file. NA for no tex output.
 #' @param silent No text output if true.
 #' @param landscape If true, the Latex table will be landscaped.
-#' @param stats Fit characteristics to be provided at bottom of table. Must be a string of reporters.
+#' @param annotations Fit characteristics to be provided at bottom of table. Must be a string of reporters.
 #'   Options include "o" for number of observations, "r" for R2, "a" for adjusted R2 and "f" for f-statistic.
 #'   The inputted string determines the order of outputted reporters. See vignette for full list of
-#'   possible values. Ex \code{stats='oraf'}.
-#' @param annotations List of optional reporters to be provided above normal fit characteristics.
+#'   possible values. Ex \code{annotations='oraf'}.
+#' @param custom_annotations List of optional reporters to be provided above normal fit characteristics.
 #'   The list must be formatted as the name of the reporter followed by a a vector of values.
-#'   Ex \code{annotations=list('R.St.E' = c('True', 'True'))}.
+#'   Ex \code{custom_annotations=list('R.St.E' = c('True', 'True'))}.
 #' @param md Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
 #'   The Markdown chunk must be set to \code{results = "asis"}.
 #' @param header Includes RCHITEX header as a Latex comment if true.
 #' @param label Latex label.
 #' @param sig List containing the associations between significance symbols and cut-off p values.
-#'   List must be in increasing order of cutoff values (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).
+#'   (ex \code{list('***' = 0.01, '**' = 0.05, '*' = 0.1)}).
 #' @param as_table True values wrap the underlying Latex Tabular object in a table.
 #' @param grouped_label Optional label printed above model names that group models together.
 #'   Expected format is a list of the name and a vector of the start and end columns.
@@ -50,18 +50,18 @@
 #'                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
 #' dep_names <- c('Fert.', 'Fert.', 'Fert.')
 #' grouped_label <- list('OLS' = c(1,2), 'logit' = 3)
-#' annotations <- list('Full dataset' = c('No', 'Yes', 'Yes'))
+#' custom_annotations <- list('Full dataset' = c('No', 'Yes', 'Yes'))
 #' sig <- list('***' = 0.001, '**' = 0.025, "'"=0.15)
 #'
 #' build(mod1, mod2, lmod, indep_names=indep_names, dep_names=dep_names,
-#' grouped_label=grouped_label, annotations=annotations, sig=sig,
+#' grouped_label=grouped_label, custom_annotations=custom_annotations, sig=sig,
 #' title='Example regression from Swiss dataset', report='t',
-#' stats='orc')
+#' annotations='orc')
 #'
 #' @export
 build <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
          max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE, report = 'p',
-         stats='oraf', annotations=NULL, md = NULL, header = TRUE, label='table', sig = NULL,
+         annotations='oraf', custom_annotations=NULL, md = NULL, header = TRUE, label='table', sig = NULL,
          as_table=TRUE, grouped_label=NULL) {
   UseMethod("build")
 }
@@ -69,7 +69,7 @@ build <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'M
 #' @export
 build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
                           max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE,
-                          report = 'p', stats='all', annotations=NULL,
+                          report = 'p', annotations='all', custom_annotations=NULL,
                           md = NULL, header = TRUE, label='table', sig = NULL,
                           as_table=TRUE, grouped_label = NULL) {
   ## Add validations
@@ -100,13 +100,17 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
     sig <- list("***" = 0.01,
                 "**"  = 0.05,
                 "*"   = 0.1)
+  } else {
+    if (!is.list(sig))
+      sig = list(sig)
+    # ensures that levels of signficance are ordered correctly
+    sig <- sig[order(-unlist(sig), decreasing = TRUE)]
   }
 
   # helps extract coefs
   extract_coefs <- function(var_name) {
     lapply(mods, function(m) {
       tryCatch({
-        # CHECK: ROBUST STANDARD ERRORS DONT MESS WITH COEFFICIENTS....
         round_n(m$coefficients[[var_name]])
       }, error = function(e) NA)
     })
@@ -129,16 +133,17 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
                       text     = NA,
                       options = list(caption=title, label=label,
                                      table = as_table, landscape=landscape)),
-                 class=c("rchitex", "rtreg"))
+                 class="rcReg")
 
   if (!is.null(md)) md <- tolower(md)
   b$i_names <- idn
-  b$fits <- get_fits(mods, stats=stats, annotations=annotations, roundr=round_n,
+  b$fits <- get_fits(mods, stats=annotations, custom_annotations=custom_annotations, roundr=round_n,
                      sig=sig)
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})
   names(b$coefs) <- names(idn)
   b$dep_names <- dep_names
+  b$type <- md
   b$reporter <- lapply(names(idn), function(var_name)  {
     unlist(extract_reporter(var_name, report))})
   names(b$reporter) <- names(idn)
@@ -149,12 +154,11 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   }
   b$sig <- lapply(pvals, function(p) sig_at(p, sig))
   names(b$sig) <- names(idn)
-  x <- model2text(b$coefs, b$reporter, fits=b$fits, sigs=b$sig, idvn=b$i_names,
+  b$text <- model2text(b$coefs, b$reporter, fits=b$fits, sigs=b$sig, idvn=b$i_names,
                   max_precision=max_precision, note=note,
                   title=title, sig_levels=sig, dn=b$dep_names,
                   grouped_label=grouped_label)
-  b$text <- x
-  if (!silent & is.null(md)) writeLines(x, con=stdout())
+  if (!silent & is.null(md)) writeLines(b$text, con=stdout())
   if (is.null(md) || (!is.null(md) && md == 'latex')) {
     b$code <- to_tex_m(reg_data = b$coefs, max_precision = max_precision,
                        fit_char = b$fits, reporter=b$reporter,
@@ -176,9 +180,11 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
   if ((is.null(md) || md=='latex' || md == 'tex') &&  landscape) code <- lan_wrap(table_wrap(code))
   else if ((is.null(md) || md=='latex' || md == 'tex') && as_table) code <- table_wrap(code)
 
-  if (header) code <- gen_header(code, md)
-  if (!is.null(md)) writeLines(code, con=stdout())
-  if (!is.null(path)) writeLines(code, con=path)
+  if (!silent) {
+    if (header) code <- gen_header(code, md)
+    if (!is.null(md)) writeLines(code, con=stdout())
+    if (!is.null(path)) writeLines(code, con=path)
+  }
   invisible(b)
 }
 
@@ -188,5 +194,13 @@ build.function <- function(...) {
   stop('How did we get here?!')
 }
 
+#' print statement for build
+#' @export
+print.rchReg <- function(m){
+  if (is.null(m$type))
+    writeLines(m$text, con=stdout())
+  else
+    writeLines(m$code, con=stdout())
+}
 
 

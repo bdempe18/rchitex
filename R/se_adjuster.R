@@ -55,7 +55,9 @@ adj_se <- function(mod, transformation) {
 #' @export
 adj_se.default <- function(mod, transformation) {
   se <- summary(mod)$coefficients
-  if (class(tranformation) == "function") se[,2] <- transformation(se[,2])
+  if (class(transformation) == "function"){
+    se[,2] <- transformation(se[,2])
+  }
   else if (is.vector(transformation) & length(transformation) == length(se[,2])) {
     se[,2] <- transformation
   }

@@ -49,7 +49,6 @@ appendize <- function(..., dir) {
           sep = '')
   }
 
-
   appendix <- paste('\\clearpage\n\\section{Appendix}\n',
                     sep='\n')
 
@@ -61,7 +60,7 @@ appendize <- function(..., dir) {
   }
   # saves the individual models
   for (m in mods) {
-    if (class(m)[1] == 'rchitex' && class(m)[2] %in% c('rtreg', 'rtsummary')) {
+    if (class(m) == 'rcReg' || class(m) == 'rcTable') {
       writeLines(m$code, con = paste(dir, '/appendix/',
                                      m$options$label, '.tex', sep=''))
       out <- in_rchitex(m)

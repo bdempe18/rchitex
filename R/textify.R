@@ -129,6 +129,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
 }
 
 center <- function(word, total_spaces, sepr = '     ') {
+  total_spaces <- vapply(total_spaces, function(a) max(a, 0), 0)
   paste0(strrep(' ', total_spaces %/% 2),
          word,
          strrep(' ', total_spaces - (total_spaces %/% 2)), collapse = '', sep=sepr)
