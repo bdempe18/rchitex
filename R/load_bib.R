@@ -1,3 +1,5 @@
+# This is a branch
+
 library(stringr)
 library(pdftools)
 ref_split <- '^References\n|^Bibliography\n|^Works Cited\n|\nReferences\n'
