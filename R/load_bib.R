@@ -49,7 +49,7 @@ read_bib <- function(bib) {
   authors <- str_split(authors, '\\s(and)\\s')
   max_n <- max(unlist(lapply(x, length)))
   authors <- lapply(x, function(x) c(x, vector(mode='character',
-                                               length=max_n - length())))
+                                               length=max_n - length(x))))
   authors_df <- data.frame(do.call(rbind, authors), stringsAsFactors = FALSE)
   colnames(authors_df) <- str_replace(colnames(authors_df), 'X', 'author')
 
@@ -62,14 +62,16 @@ read_bib <- function(bib) {
               sep=',', fill = 'right')
   }
 
-  authors_df <- authors_df %>%
+  bib_df <- authors_df %>%
     Reduce(f = sep_, x = colnames(authors_df)) %>%
     dplyr::mutate_all(tidyr::replace_na, replace='')
-
+  bib_df$date <- dates
 
   # removes authors and date from string
-  bib_f <- str_remove(bib_f, '^.*(\\)\\.\\s)', n=2)
-  titles <- str_split(bib_f, '(\\.\\s)')
+  bib_f <- lapply(bib_f, function(x) x[2])
+  bib_f <- stringr::str_remove(bib_f, '^.*(\\)\\.\\s)')
+  titles <- stringr::str_split(bib_f, '(\\.\\s)')
   titles <- unlist(lapply(titles, function(x)x[[1]]))
+  bib_df$title <- titles
 }
 
