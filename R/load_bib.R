@@ -1,12 +1,17 @@
 # This is a branch
-
+library(tidyverse)
 library(stringr)
 library(pdftools)
-ref_split <- '^References\n|^Bibliography\n|^Works Cited\n|\nReferences\n'
-folder <- '/home/ben/Documents/dump/sample_bib'
-path <- paste0(folder, '/sample_paper.pdf')
 
-#' @export`
+# matches words of at least length three that are formmatted as a label
+lab_split <- '(((\\\n)|[ ]{2,})([1-9\\.]{1,3})?([a-zA-Z]{3,})((\\\r)|(\\\n)){1,})'
+ref_delim <- '^(\\s*)?((WORKS CITED)|(REFERENCES))\\b'
+# breaks at [#] or newlined #.
+num_break <- '(^|(\\\r)|(\\\n))(\\[)?([1-9]{1,})(\\]|\\.){1,}([ ]|(\\\t))'
+folder <- 'C:/Users/bedempe/Desktop/bib/'
+master <- paste0(folder, 'meat_consumption_scalco.pdf')
+
+#' @export
 load_bib <- function(folder) {
   # loads in pdfs from folder
   files <- list.files(path = folder, full.names = T,
@@ -22,15 +27,28 @@ load_bib <- function(folder) {
 }
 
 load_master_bib <- function(path) {
+  # inputs a readable pdf and returns a vector of
+  # sections delimited by a global regex command
   file <- pdf_text(path)
-  file <- file[grepl(ref_split, file)]
-  file <- stringr::str_remove(file, ref_split) # removes section reference
+  file <- paste0(file, sep='', collapse='')
+  # locates the label splits and inserts markers
+  file <- gsub(pattern = lab_split, perl = TRUE, replacement = '=~~~=\\U\\1', file)
+  file <- unlist(stringr::str_split(file, "=~~~="))
+  file <- file[grepl(ref_delim, file)]
+  file <- as.character(stringr::str_remove(file, ref_delim))
+  file
 }
 
 
 separate_bib <- function(bib) {
-  # given a character bib (in apa) a character vector of stripped entries is returned
-  bib_f <- unlist(str_split(bib, '\n\\w')) # each newline entry is separated by a newline and no spaces
+  # splits a bib section into individual entries
+  # right now it is only split on numbered entries
+  bib_f <- unlist(stringr::str_split(bib, num_break))
+  bib_f <- bib_f[bib_f != '']
+  bib_f <- unlist(lapply(bib_f, str_remove_all, pattern=num_break))
+  bib_f <- unlist(lapply(bib_f, str_remove_all,
+                         pattern='([ ]{2,})|(\\\n)|(\\\t)|(\\\r)'))
+  # removes residual new lines and return carriages
   bib_f
 }
 
@@ -38,11 +56,10 @@ read_bib <- function(bib) {
   #given a vector of bib entries, a dataframe is created and returned
   # the columns of the data frame are the critical information: title, author, date, etc
   # assumes APA for now
-  bib_f <- str_replace_all(bib, '[\\s]+', ' ')
-  bib_f <- str_replace_all(bib_f, '\n|\t', ' ')
 
-  dates <- str_split(bib_f, '\\(|\\)')
-  dates <- unlist(lapply(dates, function(x) x[[2]]))
+  # Extracts dates as being a 4 digit number between parantheses
+  dates <- stringr::str_extract(bib, '(\\()(\\d{4})(\\))')
+  dates <- stringr::str_remove_all(dates,'[(\\())(\\()]')
 
   # separates author list from rest of bib
   bib_f <- str_split(bib_f, paste0('\\s\\(', dates, '\\).\\s'))
