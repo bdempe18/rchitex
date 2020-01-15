@@ -6,6 +6,9 @@
 \usage{
 \method{print}{rcTable}(m)
 }
+\arguments{
+\item{m}{Rchitex summary table to be printed.}
+}
 \description{
 print statement for build
 }

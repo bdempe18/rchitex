@@ -40,12 +40,14 @@
 #' data(swiss)
 #'
 #' mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
-#' mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
+#' mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education +
+#'  Infant.Mortality + Catholic + Examination)
 #' lmod <- glm(data=swiss, I(Fertility > mean(Fertility)) ~ Agriculture +
 #'               Education + Infant.Mortality + Catholic + Examination,
 #'             family=binomial(link='logit'))
 #'
-#' indep_names <- list('Agriculture' = "Agriculture share", 'Education' = 'Total education',
+#' indep_names <- list('Agriculture' = "Agriculture share", 'Education' =
+#'  'Total education',
 #'                     'Infant.Mortality' = 'Infant Mortality',
 #'                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
 #' dep_names <- c('Fert.', 'Fert.', 'Fert.')
@@ -59,19 +61,22 @@
 #' annotations='orc')
 #'
 #' @export
-build <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
-         max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE, report = 'p',
-         annotations='oraf', custom_annotations=NULL, md = NULL, header = TRUE, label='table', sig = NULL,
-         as_table=TRUE, grouped_label=NULL) {
+build <- function(..., dep_names = NULL, indep_names = NULL, note='',
+                  title = 'Model results', max_precision = 3, path = NULL,
+                  silent = FALSE, landscape = FALSE, report = 'p',
+         annotations='oraf', custom_annotations=NULL, md = NULL,
+         header = TRUE, label='table', sig = NULL, as_table=TRUE,
+         grouped_label=NULL) {
   UseMethod("build")
 }
 
 #' @export
-build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', title = 'Model results',
-                          max_precision = 3, path = NULL, silent = FALSE, landscape = FALSE,
-                          report = 'p', annotations='all', custom_annotations=NULL,
-                          md = NULL, header = TRUE, label='table', sig = NULL,
-                          as_table=TRUE, grouped_label = NULL) {
+build.default <- function(..., dep_names = NULL, indep_names = NULL, note='',
+                          title = 'Model results', max_precision = 3, path = NULL,
+                          silent = FALSE, landscape = FALSE, report = 'p',
+                          annotations='oraf', custom_annotations=NULL, md = NULL,
+                          header = TRUE, label='table', sig = NULL, as_table=TRUE,
+                          grouped_label=NULL) {
   ## Add validations
   # TODO, ensure that every element of ... is valid
   validate(md=md, max_precision=max_precision)
@@ -137,7 +142,8 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='', ti
 
   if (!is.null(md)) md <- tolower(md)
   b$i_names <- idn
-  b$fits <- get_fits(mods, stats=annotations, custom_annotations=custom_annotations, roundr=round_n,
+  b$fits <- get_fits(mods, stats=annotations, custom_annotations=custom_annotations,
+                     roundr=round_n,
                      sig=sig)
   b$coefs <- lapply(names(idn), function(var_name) {
     unlist(extract_coefs(var_name))})
@@ -195,6 +201,7 @@ build.function <- function(...) {
 }
 
 #' print statement for build
+#' @param m Rchitex model to be printed.
 #' @export
 print.rchReg <- function(m){
   if (is.null(m$type))

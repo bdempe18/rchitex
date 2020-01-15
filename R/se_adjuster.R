@@ -1,40 +1,47 @@
-#' Simple adjustment of model standard errors
+#' Simple adjustment of model standard errors.
 #'
 #' Allows model standard errors to be adjusted
 #'  prior to table output
-#'  @param mod A (linear) model
-#'  @return a modified version of the inputted model
+#' @param m A linear model.
+#' @return A custom S3 representation of the linear model with robust standard errors.
 #' @export
-rse <- function(mod) {
+rse <- function(m) {
   UseMethod('rse')
 }
 
+#' Simple adjustment of model standard errors.
+#'
+#' Allows model standard errors to be adjusted
+#'  prior to table output
+#' @param m A linear model.
+#' @return A custom S3 representation of the linear model with robust standard errors.
 #' @export
-rse.default <- function(mod) {
-  se <- lmtest::coeftest(mod, vcov = sandwich::vcovHC(mod, "HC1"))
-  mod$se <- se
-  mod$model_type <- class(mod)
-  class(mod) <- 'rse'
+rse.default <- function(m) {
+  se <- lmtest::coeftest(m, vcov = sandwich::vcovHC(m, "HC1"))
+  m$se <- se
+  m$model_type <- class(m)
+  class(m) <- 'rse'
 
-  mod
+  m
 }
 
-#' builder function
-#' @param ... Shouldn't be used so arguments not specified
-rse.function <- function(...) {
-  stop('How did we get here?!')
-}
-
+#' Prints RSE model
+#' @param m RSE model.
 #' @export
 print.rse <- function(m) {
   print(structure(m, class = m$model_type))
 }
 
+#' Extract number of observations
+#' @param m RSE model.
 #' @export
 nobs.rse <- function(m) {
-  nobs(structure(m, class = m$model_type))
+  m <- structure(m, class = m$model_type)
+  UseMethod('nobs')
 }
 
+#' Summarizes RSE models
+#' @param m RSE model.
 #' @export
 summary.rse <- function(m) {
   x <- summary(structure(m, class = m$model_type))
@@ -42,16 +49,25 @@ summary.rse <- function(m) {
   x
 }
 
-#' Simple adjustment of model standard errors
-#' @param mod A (linear) model.
-#' @param f Either a function to be transform a vector of standard errors
-#'   or a vector of new standard errors to replace the model standard errors
-#' @return a modified version of the inputted model
+#' Prints the adjusted standard erorr model.
+#' @param mod A regression model.
+#' @param transformation Either a function to be transform a vector of
+#'   standard errors or a vector of new standard errors to replace the model
+#'   standard errors
+#' @return A custom S3 representation of the regression model
+#'   with adjusted standard errors.
 #' @export
 adj_se <- function(mod, transformation) {
   UseMethod("adj_se")
 }
 
+#' Prints the adjusted standard erorr model.
+#' @param mod A regression model.
+#' @param transformation Either a function to be transform a vector of
+#'   standard errors or a vector of new standard errors to replace the model
+#'   standard errors
+#' @return A custom S3 representation of the regression model
+#'   with adjusted standard errors.
 #' @export
 adj_se.default <- function(mod, transformation) {
   se <- summary(mod)$coefficients
@@ -63,7 +79,7 @@ adj_se.default <- function(mod, transformation) {
   }
   # t-stat = beta_hat / se
   se[,3] <- se[,1] / se[,2]
-  se[,4] <- pt(se[,3], df = mod$df.residual)
+  se[,4] <- stats::pt(se[,3], df = mod$df.residual) #TODO CHECK THIS LINE
   mod$se <- se
   mod$model_type <- class(mod)
   class(mod) <- 'rse'
@@ -71,16 +87,23 @@ adj_se.default <- function(mod, transformation) {
   mod
 }
 
+#' Prints adjusted SE model#'
+#' @param m Adjusted SE model.
 #' @export
 print.adj_se <- function(m) {
   print(structure(m, class = m$model_type))
 }
 
+#' Extracts number of observations of adjusted SE model
+#' @param m Adjusted SE model.
 #' @export
 nobs.adj_se <- function(m) {
-  nobs(structure(m, class = m$model_type))
+  m <- structure(m, class = m$model_type)
+  UseMethod('nobs')
 }
 
+#' Summarizes adjusted SE model
+#' @param m Adjusted SE model.
 #' @export
 summary.adj_se <- function(m) {
   x <- summary(structure(m, class = m$model_type))

@@ -85,12 +85,14 @@ library(rchitex)
 data(swiss)
 
 mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
-mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
+mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education +
+ Infant.Mortality + Catholic + Examination)
 lmod <- glm(data=swiss, I(Fertility > mean(Fertility)) ~ Agriculture +
               Education + Infant.Mortality + Catholic + Examination,
             family=binomial(link='logit'))
 
-indep_names <- list('Agriculture' = "Agriculture share", 'Education' = 'Total education',
+indep_names <- list('Agriculture' = "Agriculture share", 'Education' =
+ 'Total education',
                     'Infant.Mortality' = 'Infant Mortality',
                     'Catholic' = 'Catholic share', 'Examination' = 'Exam')
 dep_names <- c('Fert.', 'Fert.', 'Fert.')

@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo = FALSE}
 suppressPackageStartupMessages(library(rchitex))
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tibble))
 ```
 
 RCHITEX provides an extensive set of options allowing users to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent $\LaTeX$ code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
@@ -36,7 +36,7 @@ The default setting of `describe` output the summary table as text output, perfe
 
  
 ``` {r textTables}
-state_df <- as_tibble(datasets::state.x77)
+state_df <- tibble::as_tibble(datasets::state.x77)
 describe(state_df)
 # describe(state_df, path = getwd(), silent = TRUE)
 
@@ -169,6 +169,6 @@ It is highly recommended that any adjustment to standard errors be reported.
 
 ```{r robust, results = 'asis'}
 mod_rse <- rse(mod1)
-mod_adj <- adj_se(mod1, function(x) runif(1, 0, 1))
-build(mod1, mod_rse, mod_adj, custom_annotations = list('SE' = c('Normal', 'Robust', 'Random')), annotations='or', md='html')
+#mod_adj <- adj_se(mod1, function(x) runif(1, 0, 1))
+#build(mod1, mod_rse, mod_adj, custom_annotations = list('SE' = c('Normal', 'Robust', 'Random')), #annotations='or', md='html')
 ```

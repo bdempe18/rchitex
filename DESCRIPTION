@@ -14,17 +14,18 @@ LazyData: true
 URL: https://github.com/bdempe18/rchitex
 BugReports: https://github.com/bdempe18/rchitex/issues
 Suggests: 
-    lmtest,
-    sandwich,
     covr,
     testthat (>= 2.1.0),
-    spelling,
     knitr,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    spelling,
+    tibble
 Language: en-US
 VignetteBuilder: knitr
 RoxygenNote: 7.0.2
 Imports: 
     utils,
-    stats
+    stats,
+    lmtest,
+    sandwich

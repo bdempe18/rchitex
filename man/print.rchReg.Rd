@@ -6,6 +6,9 @@
 \usage{
 \method{print}{rchReg}(m)
 }
+\arguments{
+\item{m}{Rchitex model to be printed.}
+}
 \description{
 print statement for build
 }

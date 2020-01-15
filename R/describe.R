@@ -128,6 +128,7 @@ validate <- function(md, max_precision) {
 }
 
 #' print statement for build
+#' @param m Rchitex summary table to be printed.
 #' @export
 print.rcTable <- function(m){
   if (is.null(m$options$type))
