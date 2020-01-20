@@ -203,7 +203,7 @@ build.function <- function(...) {
 #' print statement for build
 #' @param m Rchitex model to be printed.
 #' @export
-print.rchReg <- function(m){
+print.rcReg <- function(m){
   if (is.null(m$type))
     writeLines(m$text, con=stdout())
   else
