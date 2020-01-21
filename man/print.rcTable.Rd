@@ -4,10 +4,12 @@
 \alias{print.rcTable}
 \title{print statement for build}
 \usage{
-\method{print}{rcTable}(m)
+\method{print}{rcTable}(x, ...)
 }
 \arguments{
-\item{m}{Rchitex summary table to be printed.}
+\item{x}{Rchitex summary table to be printed.}
+
+\item{...}{Additional parameters}
 }
 \description{
 print statement for build

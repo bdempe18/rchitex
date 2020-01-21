@@ -4,10 +4,12 @@
 \alias{summary.rse}
 \title{Summarizes RSE models}
 \usage{
-\method{summary}{rse}(m)
+\method{summary}{rse}(object, ...)
 }
 \arguments{
-\item{m}{RSE model.}
+\item{object}{RSE model.}
+
+\item{...}{Additional parameters}
 }
 \description{
 Summarizes RSE models

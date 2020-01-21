@@ -4,10 +4,12 @@
 \alias{summary.adj_se}
 \title{Summarizes adjusted SE model}
 \usage{
-\method{summary}{adj_se}(m)
+\method{summary}{adj_se}(object, ...)
 }
 \arguments{
-\item{m}{Adjusted SE model.}
+\item{object}{Adjusted SE model.}
+
+\item{...}{Additional parameters}
 }
 \description{
 Summarizes adjusted SE model

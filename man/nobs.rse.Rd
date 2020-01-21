@@ -4,10 +4,12 @@
 \alias{nobs.rse}
 \title{Extract number of observations}
 \usage{
-nobs.rse(m)
+\method{nobs}{rse}(object, ...)
 }
 \arguments{
-\item{m}{RSE model.}
+\item{object}{RSE model.}
+
+\item{...}{Additional parameters}
 }
 \description{
 Extract number of observations

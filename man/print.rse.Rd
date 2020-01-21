@@ -4,10 +4,12 @@
 \alias{print.rse}
 \title{Prints RSE model}
 \usage{
-\method{print}{rse}(m)
+\method{print}{rse}(x, ...)
 }
 \arguments{
-\item{m}{RSE model.}
+\item{x}{RSE model.}
+
+\item{...}{Additional parameters}
 }
 \description{
 Prints RSE model
