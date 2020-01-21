@@ -1,9 +1,4 @@
-library(testthat)
-library(rchitex)
-
-context('Adjusting standard errors')
-test_check("rchitex")
-
+context('Testing RSE and SE S3')
 test_that("number of obs correctly calculated for RSE and adj.SE") {
 	data1 <- data.frame(y = rnorm(10, 10, 3), x = rnorm(10, 15, 2))
 	data2 <- data.frame(y = rnorm(100, 10, 3), x = rnorm(100, 15, 2))
