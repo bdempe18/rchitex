@@ -19,7 +19,7 @@
 #' tex2 <- build(mod2, label='f2', silent=TRUE)
 #' d <- paste(getwd(), 'rchitEx', sep='/')
 #' append(list(tex1, tex2), d)
-#' ## <-- Latex files outputted to dir --> ##
+#' ##...Latex files outputted to dir... ##
 #'
 #' @export
 

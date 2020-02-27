@@ -38,9 +38,10 @@ print.rse <- function(x, ...) {
 #' @param object RSE model.
 #' @param ... Additional parameters
 #' @export
+#' @import stats
 nobs.rse <- function(object, ...) {
   x <- structure(object, class = object$model_type)
-  nobs.default(x, ...)
+  nobs(x, ...)
 }
 
 #' Summarizes RSE models
@@ -77,8 +78,7 @@ adj_se.default <- function(mod, transformation) {
   se <- summary(mod)$coefficients
   if (class(transformation) == "function"){
     se[,2] <- transformation(se[,2])
-  }
-  else if (is.vector(transformation) & length(transformation) == length(se[,2])) {
+  } else if (is.vector(transformation) & length(transformation) == length(se[,2])) {
     se[,2] <- transformation
   }
   # t-stat = beta_hat / se
@@ -103,6 +103,7 @@ print.adj_se <- function(x, ...) {
 #' @param object Adjusted SE model.
 #' @param ... Additional parameteres
 #' @export
+#' @import stats
 nobs.adj_se <- function(object, ...) {
   object <- structure(object, class = object$model_type)
   nobs(object, ...)
