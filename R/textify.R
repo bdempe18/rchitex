@@ -19,15 +19,17 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   lengths <- c(longest_idvn, lengths)
   # row of p-val cut offs at
   p_row <- paste0(names(sig_levels),'p<',unlist(sig_levels, use.names=F),' ', collapse='')
+  p_row <- substr(p_row, 1, nchar(p_row) - 1)
 
   # the minimum width of a table is the space it takes to print "sig..p < 0.1"....
   # if the minimum width is not met, the difference is made up in the label col
 
   line_width <- sum(lengths) + 5 * (n_mods - 1) + 5 # corrected for white space between cols
-  if (line_width - nchar(p_row) - nchar("Sig:") < 0) {
-    big_line <- nchar('Sig:') + nchar(p_row)
+  if (line_width - nchar(p_row) - nchar("Sig: ") < 0) {
+    big_line <- nchar('Sig: ') + nchar(p_row)
     lengths[1] <- big_line - line_width + lengths[1]
     line_width <- big_line
+
   }
 
 
@@ -118,7 +120,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   })
   tbl <- paste0(tbl, paste0(fit_txt, collapse=''), collapse='')
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
-  tbl <- paste0(tbl, 'Sig: ', collapse='')
+  tbl <- paste0(tbl, 'Sig:', collapse='')
 
   p_row <- paste0(strrep(' ', line_width-nchar(p_row) - nchar('Sig:')),
                   p_row, collapse='')
@@ -128,7 +130,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
   tbl
 }
 
-center <- function(word, total_spaces, sepr = '     ') {
+center <- function(word, total_spaces, sepr = '') {
   total_spaces <- vapply(total_spaces, function(a) max(a, 0), 0)
   paste0(strrep(' ', total_spaces %/% 2),
          word,
@@ -153,8 +155,10 @@ data2text <- function(stat_mat, title='Summary Statistics') {
   lbl_line <- Map(function(a,b) {
     paste0(a, strrep(' ', b - nchar(a) + 3))
   }, lbls, tbl_len)
+  lbl_line <- paste0(lbl_line, collapse='')
+  lbl_line <- substr(lbl_line, 1, nchar(lbl_line)-3)
 
-  tbl <- paste0(tbl, paste0(lbl_line, collapse=''), '\n', collapse='')
+  tbl <- paste0(tbl, lbl_line, '\n', collapse='')
   tbl <- paste0(tbl, strrep('-', line_width), '\n', collapse='')
 
   # data in table is center aligned
@@ -166,6 +170,7 @@ data2text <- function(stat_mat, title='Summary Statistics') {
            paste0(row, collapse=''),
            collapse='')
   })
+  body <- lapply(body, function(row) substr(row, 1, nchar(row)-3))
 
   tbl <- paste0(tbl, paste0(body, collapse='', sep='\n'), collapse='')
   tbl

@@ -26,26 +26,31 @@ rse.default <- function(m) {
 }
 
 #' Prints RSE model
-#' @param m RSE model.
+#' @param x RSE model.
+#' @param ... Additional parameters
 #' @export
-print.rse <- function(m) {
-  print(structure(m, class = m$model_type))
+print.rse <- function(x, ...) {
+  print(structure(x, class = x$model_type), ...)
 }
 
+
 #' Extract number of observations
-#' @param m RSE model.
+#' @param object RSE model.
+#' @param ... Additional parameters
 #' @export
-nobs.rse <- function(m) {
-  m <- structure(m, class = m$model_type)
-  UseMethod('nobs')
+#' @import stats
+nobs.rse <- function(object, ...) {
+  x <- structure(object, class = object$model_type)
+  nobs(x, ...)
 }
 
 #' Summarizes RSE models
-#' @param m RSE model.
+#' @param object RSE model.
+#' @param ... Additional parameters
 #' @export
-summary.rse <- function(m) {
-  x <- summary(structure(m, class = m$model_type))
-  x$coefficients <- m$se
+summary.rse <- function(object, ...) {
+  x <- summary(structure(object, class = object$model_type), ...)
+  x$coefficients <- object$se
   x
 }
 
@@ -73,8 +78,7 @@ adj_se.default <- function(mod, transformation) {
   se <- summary(mod)$coefficients
   if (class(transformation) == "function"){
     se[,2] <- transformation(se[,2])
-  }
-  else if (is.vector(transformation) & length(transformation) == length(se[,2])) {
+  } else if (is.vector(transformation) & length(transformation) == length(se[,2])) {
     se[,2] <- transformation
   }
   # t-stat = beta_hat / se
@@ -88,25 +92,29 @@ adj_se.default <- function(mod, transformation) {
 }
 
 #' Prints adjusted SE model#'
-#' @param m Adjusted SE model.
+#' @param x Adjusted SE model.
+#' @param ... Additional parameters
 #' @export
-print.adj_se <- function(m) {
-  print(structure(m, class = m$model_type))
+print.adj_se <- function(x, ...) {
+  print(structure(x, class = x$model_type), ...)
 }
 
 #' Extracts number of observations of adjusted SE model
-#' @param m Adjusted SE model.
+#' @param object Adjusted SE model.
+#' @param ... Additional parameteres
 #' @export
-nobs.adj_se <- function(m) {
-  m <- structure(m, class = m$model_type)
-  UseMethod('nobs')
+#' @import stats
+nobs.adj_se <- function(object, ...) {
+  object <- structure(object, class = object$model_type)
+  nobs(object, ...)
 }
 
 #' Summarizes adjusted SE model
-#' @param m Adjusted SE model.
+#' @param object Adjusted SE model.
+#' @param ... Additional parameters
 #' @export
-summary.adj_se <- function(m) {
-  x <- summary(structure(m, class = m$model_type))
-  x$coefficients <- m$se
+summary.adj_se <- function(object, ...) {
+  object <- summary(structure(object, class = object$model_type), ...)
+  x$coefficients <- objct$se
   x
 }

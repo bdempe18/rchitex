@@ -4,10 +4,12 @@
 \alias{print.rcReg}
 \title{print statement for build}
 \usage{
-\method{print}{rcReg}(m)
+\method{print}{rcReg}(x, ...)
 }
 \arguments{
-\item{m}{Rchitex model to be printed.}
+\item{x}{Rchitex model to be printed.}
+
+\item{...}{Additional parameters}
 }
 \description{
 print statement for build

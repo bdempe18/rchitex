@@ -128,11 +128,12 @@ validate <- function(md, max_precision) {
 }
 
 #' print statement for build
-#' @param m Rchitex summary table to be printed.
+#' @param x Rchitex summary table to be printed.
+#' @param ... Additional parameters
 #' @export
-print.rcTable <- function(m){
-  if (is.null(m$options$type))
-    writeLines(m$text, con=stdout())
+print.rcTable <- function(x, ...){
+  if (is.null(x$options$type))
+    writeLines(x$text, con=stdout())
   else
-    writeLines(m$code, con=stdout())
+    writeLines(x$code, con=stdout())
 }

@@ -4,10 +4,12 @@
 \alias{nobs.adj_se}
 \title{Extracts number of observations of adjusted SE model}
 \usage{
-nobs.adj_se(m)
+\method{nobs}{adj_se}(object, ...)
 }
 \arguments{
-\item{m}{Adjusted SE model.}
+\item{object}{Adjusted SE model.}
+
+\item{...}{Additional parameteres}
 }
 \description{
 Extracts number of observations of adjusted SE model

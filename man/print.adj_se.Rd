@@ -4,10 +4,12 @@
 \alias{print.adj_se}
 \title{Prints adjusted SE model#'}
 \usage{
-\method{print}{adj_se}(m)
+\method{print}{adj_se}(x, ...)
 }
 \arguments{
-\item{m}{Adjusted SE model.}
+\item{x}{Adjusted SE model.}
+
+\item{...}{Additional parameters}
 }
 \description{
 Prints adjusted SE model#'

@@ -26,6 +26,6 @@ VignetteBuilder: knitr
 RoxygenNote: 7.0.2
 Imports: 
     utils,
-    stats,
     lmtest,
-    sandwich
+    sandwich,
+    stats
