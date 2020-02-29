@@ -4,11 +4,22 @@
 \alias{describe}
 \title{Formats Summary Tables to Text, LaTeX, and HTML}
 \usage{
-describe(data, note = "", silent = F, path = NA, max_precision = 6,
-  statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min =
-  min, Max = max), md = NA, landscape = FALSE, label = "sumStats",
-  title = "Summary statistics", header = TRUE, as_table = FALSE,
-  flip = FALSE)
+describe(
+  data,
+  note = "",
+  silent = F,
+  path = NA,
+  max_precision = 6,
+  statistics = list(N = length, Mean = mean, `St. Dev` = stats::sd, Min = min, Max =
+    max),
+  md = NA,
+  landscape = FALSE,
+  label = "sumStats",
+  title = "Summary statistics",
+  header = TRUE,
+  as_table = FALSE,
+  flip = FALSE
+)
 }
 \arguments{
 \item{data}{Dataframe of variables.}

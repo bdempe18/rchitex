@@ -4,7 +4,7 @@
 \alias{build.function}
 \title{builder function}
 \usage{
-\method{build}{function}(...)
+\method{build}{`function`}(...)
 }
 \arguments{
 \item{...}{Shouldn't be used so arguments not specified}
