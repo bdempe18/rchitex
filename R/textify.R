@@ -94,18 +94,18 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
     tbl_text <- lapply(names(idvn), function(iv) {
     ests <- ifelse(is.na(coefs[[iv]]),
                           '', paste0(coefs[[iv]], sigs[[iv]]))
-    spaces <- lengths[2:length(lengths)] - nchar(ests)
+    spaces <- lengths[2:length(lengths)] - nchar(ests) + 3
     ests <- center(ests, spaces)
     nam <- paste0(idvn[[iv]], strrep(' ', lengths[1] - nchar(idvn[[iv]]) + 5))
-    ests <- paste0(nam, ests, '\n', collapse='')
+    ests <- paste0(nam, substr(ests, 1, nchar(ests)-3), '\n', collapse='')
 
     ep <-ifelse(is.na(reporter[[iv]]),
                       '', paste0('(',reporter[[iv]], ')'))
-    spaces <- lengths[2:length(lengths)] - nchar(ep)
+    spaces <- lengths[2:length(lengths)] - nchar(ep) + 3
     ep <- center(ep, spaces)
     blank <- strrep(' ', lengths[1] + 5)
     ep <- paste0(blank, ep, collapse='')
-    paste0(ests, ep, '\n', sep='\n', collapse='')
+    paste0(ests, substr(ep, 1, nchar(ep)-3), '\n', sep='\n', collapse='')
   })
 
   tbl_text <- paste0(tbl_text, collapse='')
@@ -114,11 +114,14 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
 
   # model fits
   fit_txt <- lapply(names(fits), function(fc) {
-    paste0(fc, strrep(' ', lengths[1] - nchar(fc) + 5),
-           center(fits[[fc]], lengths[2:length(lengths)] -nchar(fits[[fc]])),
+    el <- center(fits[[fc]], lengths[2:length(lengths)] -nchar(fits[[fc]]) + 3)
+    el <- substr(el, 1, nchar(el)-3)
+    paste0(fc, strrep(' ', lengths[1] - nchar(fc) + 5), el,
            '\n', collapse='')
   })
-  tbl <- paste0(tbl, paste0(fit_txt, collapse=''), collapse='')
+
+  fit_txt <- paste0(fit_txt, collapse='')
+  tbl <- paste0(tbl, fit_txt, collapse='')
   tbl <- paste0(tbl, strrep('=', line_width), '\n', collapse='')
   tbl <- paste0(tbl, 'Sig:', collapse='')
 
