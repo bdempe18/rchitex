@@ -38,67 +38,30 @@ And the development version from [GitHub](https://github.com/) with:
 devtools::install_github("bdempe18/rchitex")
 ```
 
-Until development exceeds the experimental phase, the package will only be available on github.
+Until development exceeds the experimental phase, rchitex will only
+be available on github.
 
-## Text summary tables
+## Overview
 
-Summary statistics can be simply produced by passing a data frame or tibble to `describe`. 
+Rchitex's central goal is to ease the gap between statistical exploration and the writing process. Rchitex accomplishes this goal by providing tools that simplify the construction of appendixes and publication-ready tables. Dataframes and models are readily converted to LateX, html, and text output with a large number of available customizations. These table outputs can be stored as objects and deployed whenever so desired. Groupings of outputs (tables and Ggplot graphics) can then converted into into a LaTeX appendix without extraneous time spent formatting.
 
-``` {r textTables}
-suppressPackageStartupMessages(library(tidyverse))
-state_df <- as_tibble(datasets::state.x77)
-tbl_title <- 'State summary statistics'
-rchitex::describe(state_df, title = tbl_title)
+Rchitex also includes a hodgepodge of extra features, most notably a Robust Standard Error wrapper than simplifies standard error transformations.
 
-```
-By default, describe will calculate the number of observations, mean, standard deviation, min, and max of the data. The summary functions applied can be altered and reordered by passing a named vector or list of functions to the `statistics` argument. The label of each function should be a string expressing how the function should be expressed in the table.
+## Supported models
 
-Note that `describe` supports user-defined functions as long as the function maps a vector of data to a single value, $f: \mathbb{R}^d \mapsto \mathbb{R}$.
+Rchitex currently supports a growing number of model types. Currently, the list includes
+ - Linear and binominal regression (`lm` and `glm` in the stats package)
+ - Panel regression (contained in the `plm` package)
+ - Instrumental variables and Tobit regression (within the `AER` package)
+ Supported models are every-growing. Please feel free to request new models by making a pull request.
 
-``` {r}
+## Future development
 
-stat_funcs <- c('Average' = mean, 'St.D.' = sd, 
-                'random value' = function(v) sample(v, 1))
-rchitex::describe(state_df, title = tbl_title, statistics = stat_funcs)
-
-```
-
-Futher aesthetical modifications are available. Users can adjust the level of precision by overriding the default value for `max_precision`. 
-
-The whole table can be inverted by setting `flip` to True.
-
-``` {r}
-rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
-         max_precision = 0, flip = TRUE)
-```
-### Latex and HTML output
-Rchitex is likewise capable of producing the code necessary to output tables in LaTeX and HTML formats. By specifying a `path`, Rchitex will write a .tex file to the inputted path while also outputting the text table to the standard consule. The text output can be supressed by setting `silent` to TRUE.
-
-Rather than simultaneous output, rchitex can directly write LaTeX and HTML to the consule. This is particularly important if using a Markdown file (like this document). The `md` argument should either be set to 'latex' or 'html'. Note that you may need to set the chunk option `results` to 'asis'
-
-``` {r}
-rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
-         max_precision = 0, flip = TRUE, md = 'html')
-```
+The development branch of rchitex is currently working on providing statistical analysis of bibliographies. This help prevent authors from missing key pieces of literatures and help focus research.
 
 
 
-``` {r, results = 'asis'}
-rchitex::describe(state_df[,2:5], title = tbl_title, statistics = stat_funcs, 
-         max_precision = 0, flip = TRUE, md = 'html')
-```
 
-``` {r, results = 'asis'}
-data(swiss)
-mod1 <- lm(data=swiss, Fertility ~ Agriculture + Education)
-mod2 <- lm(data=swiss, Fertility ~ Agriculture + Education + Infant.Mortality + Catholic + Examination)
 
-rchitex::build(mod1, mod2, md = 'html')
-```
-### Standard errors
 
-Standard errors can be specified in a number of ways. In most cases, you may need to apply robust standard errors. The `rse` class converts a model's standard errors to robust standard errors similar to STATA's robust option (HC1). 
 
-```{r robust}
-
-```
