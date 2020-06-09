@@ -172,6 +172,11 @@ group_labels <- function(grouped_label, n_mods, html=FALSE, missing='') {
     if (col_len > 1) span <- span + col_len-1
   }
 
+  # ? not positive why I had to do this
+  temp <- names(h)
+  h <- as.numeric(h)
+  names(h) <- temp
+
   h
 }
 

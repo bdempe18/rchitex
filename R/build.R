@@ -1,14 +1,12 @@
 #' Formats Regression Tables to Text, LaTeX, and HTML
 #'
-#' Given a linear regression model, \code{build} constructs a formatted
-#'   text table for standard output as well as a Latex table that is
-#'   outputted to an provided file path.
+#' Constructs a regression table for one or more models with a wide variety of available customizations.
 #'
 #' @param ... Regression models to be included in Table.  Table will display models in the same order as provided.
 #' @param dep_names Character vector of dependent variable names. Vector should be listed in the same order
 #'   that the models will be displayed (from left to right). If NULL, the columns will be numbers (e.g. (1), (2)....)
 #' @param indep_names List of names associating independent variable names with desired names in table.
-#' @param note Optional note displayed in bottom row of the table.
+#' @param note Optional note displayed in bottom row of the table. Notes only display in LaTeX and HTML output types.
 #' @param title Title of the table.
 #' @param max_precision Maximum number of digits in a table cell.
 #' @param report Test statistic to be provided along with the coefficient.
@@ -23,7 +21,7 @@
 #' @param custom_annotations List of optional reporters to be provided above normal fit characteristics.
 #'   The list must be formatted as the name of the reporter followed by a a vector of values.
 #'   Ex \code{custom_annotations=list('R.St.E' = c('True', 'True'))}.
-#' @param md Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
+#' @param md Allows for outputting in either latex ("latex") or html ("html") for Rmarkdown formatting.
 #'   The Markdown chunk must be set to \code{results = "asis"}.
 #' @param header Includes RCHITEX header as a Latex comment if true.
 #' @param label Latex label.

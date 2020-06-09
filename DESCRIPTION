@@ -23,7 +23,7 @@ Suggests:
     tibble
 Language: en-US
 VignetteBuilder: knitr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports: 
     utils,
     lmtest,

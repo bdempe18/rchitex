@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/bdempe18/rchitex?branch=master&svg=true)](https://ci.appveyor.com/project/bdempe18/rchitex)
 <!-- badges: end -->
 
-Rchitex provides allows users to generate elegantly formatted text tables for summary statistics and regression models while simultaneously writing the equivalent LaTeX code for individual tables or full appendices to a local file. Rchitex is likewise capable of producing Latex and HTML tables for markdown files. Rchitex is intended to bridge the agp between statistical exploration in R and article writing.
+Rchitex provides allows users to generate elegantly formatted text tables for summary statistics and regression models while simultaneously writing the equivalent LaTeX code for individual tables or full appendices to a local file. Rchitex is likewise capable of producing Latex and HTML tables for markdown files. Rchitex is intended to bridge the gap between statistical exploration in R and article writing.
 
 ## Installation
 

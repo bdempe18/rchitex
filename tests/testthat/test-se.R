@@ -1,4 +1,4 @@
-context('Testing RSE and SE S3')
+context('Testing RSE and SE S3 objects')
 test_that("ensures that number of obs correctly calculated for RSE and adj.SE", {
 	data1 <- data.frame(y = rnorm(10, 10, 3), x = rnorm(10, 15, 2))
 	data2 <- data.frame(y = rnorm(100, 10, 3), x = rnorm(100, 15, 2))
@@ -34,7 +34,6 @@ test_that("ensures that number of obs correctly calculated for RSE and adj.SE", 
 	expect_equal(nobs(adj_se(mod3, se3)), nobs(mod3))
 })
 
-
 test_that("ensures that primative functions of RSE and adj.se object do not throw error", {
 	data1 <- data.frame(y = rnorm(50, 20, 5), x = rnorm(50, 10, 7),
 	                    random_y = sample(c(0,1), 5, replace=TRUE))
@@ -43,24 +42,26 @@ test_that("ensures that primative functions of RSE and adj.se object do not thro
 	mod1 <- lm(y ~ x, data=data1)
 	mod2 <- glm(random_y ~ x, data=data1, family="binomial")
 
-	# primative rse functions should not throw errors
-	expect_error(summary(rse(mod1)), NA)
-	expect_error(summary(rse(mod2)), NA)
+	hush <- function(f) invisible(capture.output(f))
 
-	expect_error(print(rse(mod1)), NA)
-	expect_error(print(rse(mod2)), NA)
+		# primative rse functions should not throw errors
+	hush(expect_error(summary(rse(mod1)), NA))
+	hush(expect_error(summary(rse(mod2)), NA))
+
+	hush(expect_error(print(rse(mod1)), NA))
+	hush(expect_error(print(rse(mod2)), NA))
 
 	# primative adj.se with func should not throw errors
-	expect_error(summary(adj_se(mod1, func)), NA)
-	expect_error(summary(adj_se(mod2, func)), NA)
+	hush(expect_error(summary(adj_se(mod1, func)), NA))
+	hush(expect_error(summary(adj_se(mod2, func)), NA))
 
-	expect_error(print(adj_se(mod1, func)), NA)
-	expect_error(print(adj_se(mod2, func)), NA)
+	hush(expect_error(print(adj_se(mod1, func)), NA))
+	hush(expect_error(print(adj_se(mod2, func)), NA))
 
 	# primative adj.se with se list should not throw errors
-	expect_error(summary(adj_se(mod1, se)), NA)
-	expect_error(summary(adj_se(mod2, se)), NA)
+	hush(expect_error(summary(adj_se(mod1, se)), NA))
+	hush(expect_error(summary(adj_se(mod2, se)), NA))
 
-	expect_error(print(adj_se(mod1, se)), NA)
-	expect_error(print(adj_se(mod2, se)), NA)
+	hush(expect_error(print(adj_se(mod1, se)), NA))
+	hush(expect_error(print(adj_se(mod2, se)), NA))
 })

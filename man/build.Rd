@@ -33,7 +33,7 @@ that the models will be displayed (from left to right). If NULL, the columns wil
 
 \item{indep_names}{List of names associating independent variable names with desired names in table.}
 
-\item{note}{Optional note displayed in bottom row of the table.}
+\item{note}{Optional note displayed in bottom row of the table. Notes only display in LaTeX and HTML output types.}
 
 \item{title}{Title of the table.}
 
@@ -57,7 +57,7 @@ possible values. Ex \code{annotations='oraf'}.}
 The list must be formatted as the name of the reporter followed by a a vector of values.
 Ex \code{custom_annotations=list('R.St.E' = c('True', 'True'))}.}
 
-\item{md}{Allows for outputting in either latex ("latex") or html ("html") for markdown formatting.
+\item{md}{Allows for outputting in either latex ("latex") or html ("html") for Rmarkdown formatting.
 The Markdown chunk must be set to \code{results = "asis"}.}
 
 \item{header}{Includes RCHITEX header as a Latex comment if true.}
@@ -76,9 +76,7 @@ Expected format is a list of the name and a vector of the start and end columns.
 Invisible return containing rchitex object.
 }
 \description{
-Given a linear regression model, \code{build} constructs a formatted
-  text table for standard output as well as a Latex table that is
-  outputted to an provided file path.
+Constructs a regression table for one or more models with a wide variety of available customizations.
 }
 \examples{
 library(rchitex)

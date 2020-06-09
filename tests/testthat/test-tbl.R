@@ -11,6 +11,7 @@ width_check <- function(tbl) {
 }
 
 test_that('ensures that every row of the table has same width', {
+
 	random_ys <- sample(c(1, 0), nrow(freeny), replace=T)
 	freeny2 <- cbind(random_ys, freeny)
 	mod1 <- lm(y ~ income.level, data = freeny)
@@ -18,11 +19,12 @@ test_that('ensures that every row of the table has same width', {
 		   price.index, data = freeny)
 	mod3 <- glm(random_ys ~ market.potential + price.index, data = freeny2,
 		    family = 'binomial')
+	labels <- c("first column", "second")
 
 	# Checks build function
 	expect_true(width_check(build(mod1, silent=T)))
 	expect_true(width_check(build(mod2, silent=T)))
-	expect_true(width_check(build(mod3, silent=T)))
+	expect_true(width_check(build(mod3, silent=T, grouped_label = labels)))
 
 	# Checks describe function
 	expect_true(width_check(describe(freeny, silent=T)))

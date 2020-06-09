@@ -26,10 +26,10 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
 
   line_width <- sum(lengths) + 5 * (n_mods - 1) + 5 # corrected for white space between cols
   if (line_width - nchar(p_row) - nchar("Sig: ") < 0) {
+    print(nchar(p_row) + nchar('Sig: '))
     big_line <- nchar('Sig: ') + nchar(p_row)
     lengths[1] <- big_line - line_width + lengths[1]
     line_width <- big_line
-
   }
 
 
@@ -61,7 +61,6 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
                   paste0(gl, collapse=''), '\n', collapse='')
 
     # dashed underline
-
     gl <- lapply(seq_along(gl_vector), function(i) {
       start_col <- if (i>1) sum(gl_vector[1:i-1]) + 2 else 2
 
@@ -88,7 +87,7 @@ model2text <- function(coefs, reporter, fits, sigs, idvn, max_precision,
 
   tbl <- paste0(tbl, strrep(' ', lengths[1] + 5), collapse='')
   tbl <- paste0(tbl, paste0(center(dn, lengths[2:length(lengths)] -
-                                     nchar(dn)), collapse=''),
+                                     nchar(dn) + 3), collapse=''),
                 '\n', collapse='')
   tbl <- paste0(tbl, strrep('~', line_width), '\n', collapse='')
     tbl_text <- lapply(names(idvn), function(iv) {

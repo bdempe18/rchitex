@@ -18,7 +18,7 @@ tables for summary statistics and regression models while simultaneously
 writing the equivalent LaTeX code for individual tables or full
 appendices to a local file. Rchitex is likewise capable of producing
 Latex and HTML tables for markdown files. Rchitex is intended to bridge
-the agp between statistical exploration in R and article writing.
+the gap between statistical exploration in R and article writing.
 
 ## Installation
 

@@ -18,7 +18,8 @@ describe(
   title = "Summary statistics",
   header = TRUE,
   as_table = FALSE,
-  flip = FALSE
+  flip = FALSE,
+  ...
 )
 }
 \arguments{

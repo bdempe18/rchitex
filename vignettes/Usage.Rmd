@@ -19,11 +19,11 @@ suppressPackageStartupMessages(library(rchitex))
 suppressPackageStartupMessages(library(tibble))
 ```
 
-RCHITEX provides an extensive set of options allowing users to generate and output nicely formatted text tables wiles simultaneously outputting the equivalent $\LaTeX$ code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
+RCHITEX provides an extensive set of options allowing users to generate and output nicely formatted text tables while simultaneously outputting the equivalent $\LaTeX$ code to a provided path. rchitex is intended to bridge the gap between statistical exploration in R and article writing.
 
 ## Summary statistics
 
-At its barebones, `describe` applies a list of summary statistics to all the numeric columns of a data frame or tibble^[For the sake of brevity, I will just write drata frame instead of "data frame and tibble.". All functionality for rchitex works for both structures.] The default functions (in order) are
+The `describe()` function constructs a table of summary statistics for all the numeric columns of a data frame or tibble^[For the sake of brevity, I will just write drata frame instead of "data frame and tibble.". Rchitex works for both structures.] The default functions (in order) are
 
 - Number of observations
 - column mean
@@ -32,17 +32,16 @@ At its barebones, `describe` applies a list of summary statistics to all the num
 - Minimum
 - Maximum
 
-The default setting of `describe` output the summary table as text output, perfect for early exploratory work. Simplying providing a path to the argument `path` will simultaneously output a text table to the console and write a tex file to the provided path. Setting `silent = TRUE` will supress the text output
+The default setting of `describe()` produces text output, perfect for early exploratory work. Simplying providing a path to the argument `path` will write a LaTeX file along with the printing the equivalent text table to the consule. Setting `silent = TRUE` will supress the console output.
 
  
 ``` {r textTables}
 state_df <- tibble::as_tibble(datasets::state.x77)
 describe(state_df)
-# describe(state_df, path = getwd(), silent = TRUE)
-
 ```
-The default functions can be overwritten to either change the order of the operations,
-rename the operations, or apply additional (including self-defined) functions. The `summary` argument can be fed a named vector or a list of function names and the summary function. Note that `describe` supports user-defined functions as long as the function maps a vector of data to a single value, $f: \mathbb{R}^d \mapsto \mathbb{R}$.
+### Function customization
+
+Users can specify the order of functions, rename function lalbe, and supply additional (including self-defined) functions. The `summary` argument can be fed a named vectored or list of function names and summary functions.  Note that `describe` supports user-defined functions as long as the function maps a vector of data to a single value, $f: \mathbb{R}^d \mapsto \mathbb{R}$.
 
 
 ``` {r}
@@ -52,6 +51,7 @@ stat_funcs <- c('Average' = mean, 'St.D.' = sd,
 rchitex::describe(state_df, statistics = stat_funcs)
 
 ```
+### Aestetic customizations
 
 Futher aestetic customizations are available.
 
@@ -60,6 +60,7 @@ Futher aestetic customizations are available.
 - `max_precision` specifies the maximum number of digits to the right of the decimal
 - `flip` rotates the table so the columns are listed horizontally and functions vertically
 
+
 ``` {r}
 title <- 'State summary statistics'
 note <- 'a note'
@@ -67,17 +68,8 @@ max_precision <- 0
 describe(state_df, title = title, max_precision = max_precision, flip = TRUE)
 ```
 
-### rchitex and rmarkdown
-
-rchitex is also capable of directly outputing Latex and HTML code to be knitted into a rmarkdown file (like this one). Setting the argument `md` (short for markdown) to either "$\LaTeX$" or "html" will override the default text output. Note that writing to a local disk is still possible. In order for rmarkdown to correctly format the html or Latex code set `results='asis'` in the chunk header.
-
-``` {r, results = 'asis'}
-describe(state_df[,2:5], title = title, statistics = stat_funcs, 
-         max_precision = 0,  md = 'html')
-```
-
 ### $\LaTeX$ output
-Unless otherwise specified, rchitex writes summary statistics (and regression tables, but more on that later) as a tabular object. This is meant to give users greater control over how the table is intergrated in either their markdown or Latex document. Setting `as_table` to true will wrap the tabular object with a table. This allows users to provide a reference `label`
+Unless otherwise specified, rchitex writes summary statistics (and regression tables, but more on that later) as a tabular object. This is meant to give users greater control over how the table is intergrated in either their markdown or Latex document. Setting `as_table` to true will wrap the tabular object with a table. This allows users to provide a reference `label`.
 
 ```{r sum_tex}
 #describe(state_df[,2:5], title = title, statistics = stat_funcs,
@@ -85,19 +77,29 @@ Unless otherwise specified, rchitex writes summary statistics (and regression ta
 #	 label = tbl:sumStats)
 ```
 
+### Integrating rchitex into Rmarkdown
+
+HTML and Latex tables can also be knitted into an Rmarkdown file (like this one). Setting the argument `md` (short for markdown) to either "latex" or "html" will override the default text output. Note that writing to a local disk is still possible. In order for rmarkdown to correctly format the html or Latex code set `results='asis'` in the chunk header.
+
+``` {r, results = 'asis'}
+describe(state_df[,2:5], title = title, statistics = stat_funcs, 
+         max_precision = 0,  md = 'html')
+```
+
 ## Regression output
 
-rchitex also constructs highly customizable regression tables. The general flow and operations are similar to that of summary tables. By default, a text table is outputted to the console. Providing a `path` will also output a Latex table to the provided path. Overriding the default null value for `md` will output a Latex or html table to the consule in order to be knitted in a markdown file. All the customization listed above are available except for `flip`.
+rchitex also constructs highly customizable regression tables with the `build()` function. The general flow is similar to `describe()`. By default, a text table is outputted to the console. Providing a `path` will also output a Latex table to the provided path. Overriding the default null value for `md` will output a Latex or html table to the consule in order to be knitted into a markdown file. All the customization listed above are available except for `flip`.
 
 ``` {r, results = 'asis'}
 data(swiss)
 mod1 <- lm(data=swiss, Fertility ~ Agriculture + Infant.Mortality)
-mod2 <- lm(data=swiss, Fertility ~ Agriculture + Infant.Mortality + Catholic + Examination)
+mod2 <- update(mod1, . ~ . + Catholic + Examination)
 
 build(mod1, mod2, md = 'html')
 ```
+
 ### Indepedent variable labeling 
-A model's independent variables can be reformated by providing a vector or list of output names that correspond to the variable name found in the model. Variables can be excluded from the outputed table by excluded them from the vector of names. Likewise, the order of independent variables can be specified according to their order in the name vector. A constant variable is implicitly included in the model output as 'Constant'. It can be excluded , renamed, or moved just like any other independent variable
+The independent variables can be renamed by providing a vector or list of output names that correspond to the variable name found in the model. Variables can be excluded from the outputed table by excluded them from the vector of names. Likewise, the order of independent variables can be specified according to their order in the name vector. A constant variable is implicitly included in the model output as 'Constant'. It can be excluded , renamed, or moved just like any other independent variable
 
 ```{r indep_names, results='asis'}
 indep_names = c('Agriculture' = 'Agriculture',

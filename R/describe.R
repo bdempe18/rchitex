@@ -36,7 +36,7 @@ describe <- function(data, note='', silent = F, path = NA, max_precision = 6,
                                       'Min' = min,
                                       'Max' = max),
                      md = NA, landscape=FALSE, label='sumStats', title="Summary statistics",
-                     header=TRUE, as_table=FALSE, flip=FALSE) {
+                     header=TRUE, as_table=FALSE, flip=FALSE, ...) {
   UseMethod("describe")
 }
 
@@ -49,7 +49,7 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
                                        'Min' = min,
                                        'Max' = max),
                      md = NULL, landscape=FALSE, label='sumStats', title="Summary statistics",
-                     header=TRUE, as_table=FALSE, flip=FALSE) {
+                     header=TRUE, as_table=FALSE, flip=FALSE, ...) {
 
   validate(md=md, max_precision=max_precision)
 
@@ -67,7 +67,8 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
 
   col_stats <- function(data, fs) {
     lapply(fs, function(f)  {
-      round_n(f(data)) })
+      tryCatch(round_n(f(data, ...)),
+               error = function(c) round_n(f(data)))})
   }
 
   d$data <- lapply(colnames(data), function(column) {
@@ -93,9 +94,14 @@ describe.default <- function(data, note='', silent = F, path = NULL, max_precisi
   # this is a cluster fuck of an if statement
   if (is.null(md) || tolower(md) == 'latex' || tolower(md) == 'tex') {
     d$code <- summary2tex(stats_mat = d$data, note=note)
-    if (landscape) d$code <- lan_wrap(table_wrap(d$code))
-    else if (as_table) d$code <- table_wrap(d$code)
-    if (header) d$code <- header_wrap(d$code)
+    if ((tolower(md) == 'latex' || tolower(md) == 'tex') && as_table != FALSE)
+      d$code <- table_wrap(d$code)
+    if (landscape)
+      d$code <- lan_wrap(table_wrap(d$code))
+    else if (is.null(md) && as_table)
+      d$code <- table_wrap(d$code)
+    if (header)
+      d$code <- header_wrap(d$code)
   } else if (!is.null(md) || tolower(md) == 'html') {
     d$code <- to_html(d$data, title=title, header=header)
   }
