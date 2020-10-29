@@ -142,7 +142,7 @@ The following list shows the different annotation characters and what statistic 
 Note in the table below that if an annotation does not apply to a model, it shows up as a blank entry.
 
 ```{r annotations, results='asis'}
-annotations <- 'rfw'
+annotations <- 'rfl'
 build(mod1, mod2, probit, logit, indep_names = indep_names, title = 'Grouped labels',
       grouped_label = grouped_label, md='html', annotations = annotations)
 ```
@@ -158,7 +158,7 @@ build(mod1, mod2, probit, logit, indep_names = indep_names, title = 'Grouped lab
 Both the thresholds and symbolic representation of the levels of statistical significance can be customized by passing a named vector or list to the `sig` argument. Each label should identify a symbol and each value indicate a threshold.
 
 ``` {r significance, results = 'asis'}
-sig <- list('a' = .5, 'b' = 0.05, 'c' = 0.01)
+sig <- list('+' = .5, '++' = 0.05, '+++' = 0.01)
 build(mod1, mod2, probit, logit, indep_names = indep_names, title = 'Grouped labels',
       md='html', sig=sig)
 ```
@@ -171,6 +171,6 @@ It is highly recommended that any adjustment to standard errors be reported.
 
 ```{r robust, results = 'asis'}
 mod_rse <- rse(mod1)
-#mod_adj <- adj_se(mod1, function(x) runif(1, 0, 1))
-#build(mod1, mod_rse, mod_adj, custom_annotations = list('SE' = c('Normal', 'Robust', 'Random')), #annotations='or', md='html')
+mod_adj <- adj_se(mod1, function(x) runif(1, 0, 1))
+build(mod1, mod_rse, mod_adj, custom_annotations = list('SE' = c('Normal', 'Robust', 'Random')), annotations='or', md='html')
 ```

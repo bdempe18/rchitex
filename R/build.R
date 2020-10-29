@@ -80,6 +80,7 @@ build.default <- function(..., dep_names = NULL, indep_names = NULL, note='',
   validate(md=md, max_precision=max_precision)
   mods <- list(...)
   idn <- format_indep_names(mods, indep_names)
+
   # handles the case that no dep names are provided
   if (is.null(dep_names)) dep_names <- paste0('(', seq(1,length(mods)),')')
   # handles the case that dep names length exceeds # of models
